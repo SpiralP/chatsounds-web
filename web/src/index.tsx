@@ -4,7 +4,7 @@ import init, {
   chatsounds_init,
   chatsounds_play,
   chatsounds_search,
-} from "wasm-test";
+} from "chatsounds-web";
 
 async function load() {
   await chatsounds_init();
