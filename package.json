@@ -9,7 +9,7 @@
     "build": "cd web && concurrently --raw \"yarn run typecheck\" \"cross-env NODE_ENV=production yarn run build:js\"",
     "build:dev": "cd web && yarn run build:js",
     "build:js": "rimraf dist && cd web && yarn run webpack --config webpack.config.ts",
-    "build:wasm": "rimraf pkg && wasm-pack build --target web",
+    "build:wasm": "wasm-pack build --target web",
     "webpack": "cd web && cross-env NODE_OPTIONS=\"--no-warnings --loader ts-node/esm\" webpack",
     "typecheck": "cd web && tsc --noEmit",
     "format": "cd web && prettier --write --ignore-path ../.gitignore .",
