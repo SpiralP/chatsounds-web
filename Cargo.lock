@@ -31,17 +31,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "508b352bb5c066aac251f6daf6b36eccd03e8a88e8081cd44959ea277a3af9a8"
 
 [[package]]
-name = "async-trait"
-version = "0.1.57"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "76464446b8bc32758d7e88ee1a804d9914cd9b1cb264c029899680b0be29826f"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -138,10 +127,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 [[package]]
 name = "chatsounds"
 version = "0.1.0"
-source = "git+https://github.com/SpiralP/rust-chatsounds.git#a90cfc9920c30bd2d8c2bfaaa7b9dccf844bd38e"
+source = "git+https://github.com/SpiralP/rust-chatsounds.git#7fedba2ef7ed343264fbf1d945eafadea02aef77"
 dependencies = [
  "anyhow",
- "async-trait",
  "bytes",
  "futures",
  "getrandom",
@@ -164,7 +152,6 @@ dependencies = [
  "chatsounds",
  "console_error_panic_hook",
  "futures",
- "getrandom",
  "lazy_static",
  "rand",
  "reqwest",

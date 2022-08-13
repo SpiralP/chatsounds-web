@@ -12,7 +12,6 @@ anyhow = "1"
 chatsounds = { git = "https://github.com/SpiralP/rust-chatsounds.git", default-features = false, features = ["playback", "wasm"] }
 console_error_panic_hook = "0.1"
 futures = "0.3"
-getrandom = { version = "0.2", features = ["js"] }
 lazy_static = "1.4.0"
 rand = "0.8"
 reqwest = "0.11"

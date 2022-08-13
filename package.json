@@ -6,7 +6,7 @@
   "packageManager": "yarn@3.2.2",
   "scripts": {
     "dev": "cd web && yarn run webpack serve",
-    "build": "cd web && concurrently --raw \"yarn run typecheck\" \"cross-env NODE_ENV=production yarn run build:js\"",
+    "build": "cd web && cross-env NODE_ENV=production yarn run build:js",
     "build:dev": "cd web && yarn run build:js",
     "build:js": "rimraf dist && cd web && yarn run webpack --config webpack.config.ts",
     "build:wasm": "wasm-pack build --target web",

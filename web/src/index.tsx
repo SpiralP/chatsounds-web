@@ -1,22 +1,22 @@
-import init, {
-  chatsounds_fetch_and_load_github_api,
-  chatsounds_fetch_and_load_github_msgpack,
-  chatsounds_init,
-  chatsounds_play,
-  chatsounds_search,
+import loadWasm, {
+  fetch_and_load_github_api,
+  fetch_and_load_github_msgpack,
+  play,
+  search,
+  setup,
 } from "chatsounds-web";
 
 async function load() {
-  await chatsounds_init();
-  console.log("chatsounds_init done");
+  await setup();
+  console.log("setup done");
 
   for (const [name, path] of [
     ["NotAwesome2/chatsounds", "sounds"],
     ["Metastruct/garrysmod-chatsounds", "sound/chatsounds/autoadd"],
     ["PAC3-Server/chatsounds", "sounds/chatsounds"],
   ]) {
-    await chatsounds_fetch_and_load_github_api(name, path);
-    console.log("chatsounds_fetch_and_load_github_api done");
+    await fetch_and_load_github_api(name, path);
+    console.log("fetch_and_load_github_api done");
   }
 
   for (const [name, path] of [
@@ -31,20 +31,20 @@ async function load() {
     ["PAC3-Server/chatsounds-valve-games", "portal"],
     ["PAC3-Server/chatsounds-valve-games", "tf2"],
   ]) {
-    await chatsounds_fetch_and_load_github_msgpack(name, path);
-    console.log("chatsounds_fetch_and_load_github_api done");
+    await fetch_and_load_github_msgpack(name, path);
+    console.log("fetch_and_load_github_api done");
   }
 
   const div = document.createElement("div");
   const input = document.createElement("input");
   input.type = "text";
   input.oninput = async () => {
-    const results = await chatsounds_search(input.value);
+    const results = await search(input.value);
     div.innerText = results;
   };
   input.onkeydown = async (e) => {
     if (e.key === "Enter") {
-      await chatsounds_play(input.value);
+      await play(input.value);
     }
   };
   document.body.appendChild(input);
@@ -53,9 +53,9 @@ async function load() {
 }
 
 async function main() {
-  console.log("init");
-  await init();
-  console.log("init done");
+  console.log("loadWasm");
+  await loadWasm();
+  console.log("loadWasm done");
 
   const button = document.createElement("button");
   button.innerText =

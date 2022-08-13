@@ -1,7 +1,5 @@
 #![feature(local_key_cell_methods)]
 
-use std::path::PathBuf;
-
 use chatsounds::Chatsounds;
 use futures::lock::Mutex;
 use rand::thread_rng;
@@ -33,17 +31,15 @@ lazy_static::lazy_static! {
 }
 
 #[wasm_bindgen]
-pub async fn chatsounds_init() {
-    log!("chatsounds_init");
-    {
-        let mut chatsounds = CHATSOUNDS.lock().await;
-        *chatsounds = Some(Chatsounds::new(&PathBuf::new()).unwrap());
-    }
+pub async fn setup() {
+    log!("setup");
+    let mut chatsounds = CHATSOUNDS.lock().await;
+    *chatsounds = Some(Chatsounds::new().unwrap());
 }
 
 #[wasm_bindgen]
-pub async fn chatsounds_fetch_and_load_github_api(name: String, path: String) {
-    log!("chatsounds_fetch_and_load_github_api {:?} {:?}", name, path);
+pub async fn fetch_and_load_github_api(name: String, path: String) {
+    log!("fetch_and_load_github_api {:?} {:?}", name, path);
 
     let mut chatsounds = CHATSOUNDS.lock().await;
     let chatsounds = chatsounds.as_mut().expect("chatsounds None");
@@ -56,12 +52,8 @@ pub async fn chatsounds_fetch_and_load_github_api(name: String, path: String) {
 }
 
 #[wasm_bindgen]
-pub async fn chatsounds_fetch_and_load_github_msgpack(name: String, path: String) {
-    log!(
-        "chatsounds_fetch_and_load_github_msgpack {:?} {:?}",
-        name,
-        path
-    );
+pub async fn fetch_and_load_github_msgpack(name: String, path: String) {
+    log!("fetch_and_load_github_msgpack {:?} {:?}", name, path);
 
     let mut chatsounds = CHATSOUNDS.lock().await;
     let chatsounds = chatsounds.as_mut().expect("chatsounds None");
@@ -74,8 +66,8 @@ pub async fn chatsounds_fetch_and_load_github_msgpack(name: String, path: String
 }
 
 #[wasm_bindgen]
-pub async fn chatsounds_play(input: String) {
-    log!("chatsounds_play {:?}", &input);
+pub async fn play(input: String) {
+    log!("play {:?}", &input);
 
     let mut chatsounds = CHATSOUNDS.lock().await;
     let chatsounds = chatsounds.as_mut().expect("chatsounds None");
@@ -84,8 +76,8 @@ pub async fn chatsounds_play(input: String) {
 }
 
 #[wasm_bindgen]
-pub async fn chatsounds_search(input: String) -> String {
-    log!("chatsounds_search {:?}", &input);
+pub async fn search(input: String) -> String {
+    log!("search {:?}", &input);
 
     let mut chatsounds = CHATSOUNDS.lock().await;
     let chatsounds = chatsounds.as_mut().expect("chatsounds None");
