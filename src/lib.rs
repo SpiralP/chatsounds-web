@@ -1,6 +1,6 @@
 #![feature(local_key_cell_methods)]
 
-use std::sync::Arc;
+use std::path::PathBuf;
 
 use chatsounds::Chatsounds;
 use futures::lock::Mutex;
@@ -28,17 +28,16 @@ pub fn main() {
     console_error_panic_hook::set_once();
 }
 
-thread_local! {
-    static CHATSOUNDS: Arc<Mutex<Option<Chatsounds>>> = Default::default();
+lazy_static::lazy_static! {
+    static ref CHATSOUNDS: Mutex<Option<Chatsounds>> = Default::default();
 }
 
 #[wasm_bindgen]
 pub async fn chatsounds_init() {
     log!("chatsounds_init");
     {
-        let chatsounds = CHATSOUNDS.with(|rc| rc.clone());
-        let mut chatsounds = chatsounds.lock().await;
-        *chatsounds = Some(Chatsounds::new().unwrap());
+        let mut chatsounds = CHATSOUNDS.lock().await;
+        *chatsounds = Some(Chatsounds::new(&PathBuf::new()).unwrap());
     }
 }
 
@@ -46,8 +45,7 @@ pub async fn chatsounds_init() {
 pub async fn chatsounds_fetch_and_load_github_api(name: String, path: String) {
     log!("chatsounds_fetch_and_load_github_api {:?} {:?}", name, path);
 
-    let chatsounds = CHATSOUNDS.with(|rc| rc.clone());
-    let mut chatsounds = chatsounds.lock().await;
+    let mut chatsounds = CHATSOUNDS.lock().await;
     let chatsounds = chatsounds.as_mut().expect("chatsounds None");
 
     let data = chatsounds
@@ -65,8 +63,7 @@ pub async fn chatsounds_fetch_and_load_github_msgpack(name: String, path: String
         path
     );
 
-    let chatsounds = CHATSOUNDS.with(|rc| rc.clone());
-    let mut chatsounds = chatsounds.lock().await;
+    let mut chatsounds = CHATSOUNDS.lock().await;
     let chatsounds = chatsounds.as_mut().expect("chatsounds None");
 
     let data = chatsounds
@@ -80,8 +77,7 @@ pub async fn chatsounds_fetch_and_load_github_msgpack(name: String, path: String
 pub async fn chatsounds_play(input: String) {
     log!("chatsounds_play {:?}", &input);
 
-    let chatsounds = CHATSOUNDS.with(|rc| rc.clone());
-    let mut chatsounds = chatsounds.lock().await;
+    let mut chatsounds = CHATSOUNDS.lock().await;
     let chatsounds = chatsounds.as_mut().expect("chatsounds None");
 
     chatsounds.play(&input, thread_rng()).await.unwrap();
@@ -91,8 +87,7 @@ pub async fn chatsounds_play(input: String) {
 pub async fn chatsounds_search(input: String) -> String {
     log!("chatsounds_search {:?}", &input);
 
-    let chatsounds = CHATSOUNDS.with(|rc| rc.clone());
-    let mut chatsounds = chatsounds.lock().await;
+    let mut chatsounds = CHATSOUNDS.lock().await;
     let chatsounds = chatsounds.as_mut().expect("chatsounds None");
 
     let mut results = chatsounds.search(&input);
