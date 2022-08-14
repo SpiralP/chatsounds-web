@@ -2,15 +2,20 @@ import CopyPlugin from "copy-webpack-plugin";
 import { execa } from "execa";
 import glob from "glob";
 import path from "path";
+
+import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+import ReactRefreshTypeScript from "react-refresh-typescript";
+import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import { fileURLToPath } from "url";
 import { promisify } from "util";
-import webpack from "webpack";
+import webpack, { WebpackPluginInstance } from "webpack";
+import "webpack-dev-server";
 
 const globAsync = promisify(glob);
 
-const { NODE_ENV } = process.env;
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PROJECT_ROOT = path.resolve(__dirname, "..");
+const isDevelopment = process.env.NODE_ENV !== "production";
+const DIR_NAME = path.dirname(fileURLToPath(import.meta.url));
+const PROJECT_ROOT = path.resolve(DIR_NAME, "..");
 
 const AutoBuildWasmPlugin: webpack.WebpackPluginInstance = {
   apply: (compiler) => {
@@ -25,17 +30,13 @@ const AutoBuildWasmPlugin: webpack.WebpackPluginInstance = {
     };
 
     const build = () =>
-      execa(
-        "yarn",
-        ["build:wasm", NODE_ENV === "production" ? "--release" : "--dev"],
-        {
-          stderr: "inherit",
-          stdout: "inherit",
-        }
-      ).catch(() => {
+      execa("yarn", ["build:wasm", isDevelopment ? "--dev" : "--release"], {
+        stderr: "inherit",
+        stdout: "inherit",
+      }).catch(() => {
         // everything already screams
       });
-    compiler.hooks.run.tapPromise("build wasm", async (compiler) => {
+    compiler.hooks.run.tapPromise("build wasm", async (_compiler) => {
       await build();
     });
 
@@ -70,21 +71,40 @@ const config: webpack.Configuration = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: "ts-loader",
         exclude: /node_modules/,
+        use: {
+          loader: "ts-loader",
+          options: {
+            getCustomTransformers: () => ({
+              before: [isDevelopment && ReactRefreshTypeScript()].filter(
+                Boolean
+              ),
+            }),
+            transpileOnly: isDevelopment,
+          },
+        },
+      },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
       },
     ],
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
+    plugins: [new TsconfigPathsPlugin({ configFile: "./tsconfig.json" })],
   },
   plugins: [
     new CopyPlugin({ patterns: ["./src/index.html"] }),
     AutoBuildWasmPlugin,
-  ],
-  mode: NODE_ENV === "production" ? "production" : "development",
+    isDevelopment && new ReactRefreshWebpackPlugin(),
+  ].filter((a): a is WebpackPluginInstance => Boolean(a)),
+  mode: isDevelopment ? "development" : "production",
   experiments: {
     asyncWebAssembly: true,
+  },
+  devServer: {
+    hot: true,
   },
 };
 

@@ -2,8 +2,9 @@
 
 use chatsounds::Chatsounds;
 use futures::lock::Mutex;
+use js_sys::Array;
 use rand::thread_rng;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{prelude::*, JsCast};
 
 pub type Result<T> = std::result::Result<T, JsError>;
 
@@ -67,6 +68,9 @@ pub async fn fetch_and_load_github_msgpack(name: String, path: String) {
 
 #[wasm_bindgen]
 pub async fn play(input: String) {
+    if input.is_empty() {
+        return;
+    }
     log!("play {:?}", &input);
 
     let mut chatsounds = CHATSOUNDS.lock().await;
@@ -76,18 +80,23 @@ pub async fn play(input: String) {
 }
 
 #[wasm_bindgen]
-pub async fn search(input: String) -> String {
+extern "C" {
+    #[wasm_bindgen(typescript_type = "Array<string>")]
+    pub type StringArray;
+}
+
+#[wasm_bindgen(typescript_type = "string[]")]
+pub async fn search(input: String) -> StringArray {
     log!("search {:?}", &input);
 
     let mut chatsounds = CHATSOUNDS.lock().await;
     let chatsounds = chatsounds.as_mut().expect("chatsounds None");
 
     let mut results = chatsounds.search(&input);
-    let results = results
+    results
         .drain(..)
         .take(10)
-        .map(|(_, str)| str.to_owned())
-        .collect::<Vec<_>>();
-
-    results.join("\n")
+        .map(|(_, str)| JsValue::from_str(str))
+        .collect::<Array>()
+        .unchecked_into()
 }

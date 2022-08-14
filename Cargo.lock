@@ -152,6 +152,7 @@ dependencies = [
  "chatsounds",
  "console_error_panic_hook",
  "futures",
+ "js-sys",
  "lazy_static",
  "rand",
  "reqwest",
