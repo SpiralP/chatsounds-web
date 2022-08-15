@@ -5,6 +5,8 @@ import { usePrevious } from "react-use";
 import ChatsoundsResult from "/components/ChatsoundsResult";
 import useWasm from "/hooks/useWasm";
 
+const MAX_VISIBLE_RESULTS = 50;
+
 export default function ChatsoundsSearchResults({
   input,
   onSetInput,
@@ -42,7 +44,11 @@ export default function ChatsoundsSearchResults({
   }, [lastTabSelection, onSetInput, results, tabSelection]);
 
   const visibleResults = React.useMemo(
-    () => results.slice(tabSelection || 0, (tabSelection || 0) + 10),
+    () =>
+      results.slice(
+        tabSelection || 0,
+        (tabSelection || 0) + MAX_VISIBLE_RESULTS
+      ),
     [results, tabSelection]
   );
 
