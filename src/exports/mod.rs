@@ -1,8 +1,15 @@
-use js_sys::Array;
-use rand::thread_rng;
-use wasm_bindgen::{prelude::*, JsCast};
+pub mod types;
 
-use crate::{chatsounds::with_chatsounds, log, Result};
+use chatsounds::{GitHubApiTrees, GitHubMsgpackEntries};
+use futures::FutureExt;
+use rand::thread_rng;
+use wasm_bindgen::prelude::*;
+
+use crate::{
+    chatsounds::{with_chatsounds, with_mut_chatsounds},
+    exports::types::StringArray,
+    log, Result,
+};
 
 #[wasm_bindgen(start)]
 pub fn main() {
@@ -16,36 +23,59 @@ pub fn main() {
 pub async fn setup() -> Result<()> {
     log!("setup");
 
-    with_chatsounds(move |chatsounds| async move {
-        drop(chatsounds);
+    with_mut_chatsounds(move |_| async move { Ok(()) }.boxed_local()).await
+}
 
-        Ok(())
+#[wasm_bindgen]
+pub struct JsGitHubApiTrees(GitHubApiTrees);
+
+#[wasm_bindgen(js_name = fetchGithubApi)]
+pub async fn fetch_github_api(name: String, path: String) -> Result<JsGitHubApiTrees> {
+    log!("fetch_github_api {:?} {:?}", name, path);
+
+    let data = with_chatsounds(move |chatsounds| {
+        async move { Ok(chatsounds.fetch_github_api(&name, &path, false).await?) }.boxed_local()
+    })
+    .await?;
+
+    Ok(JsGitHubApiTrees(data))
+}
+
+#[wasm_bindgen(js_name = loadGithubApi)]
+pub async fn load_github_api(name: String, path: String, data: JsGitHubApiTrees) -> Result<()> {
+    log!("load_github_api {:?} {:?}", name, path);
+
+    with_mut_chatsounds(move |chatsounds| {
+        async move { Ok(chatsounds.load_github_api(&name, &path, data.0)?) }.boxed_local()
     })
     .await
 }
 
 #[wasm_bindgen]
-pub async fn fetch_and_load_github_api(name: String, path: String) -> Result<()> {
-    log!("fetch_and_load_github_api {:?} {:?}", name, path);
+pub struct JsGitHubMsgpackEntries(GitHubMsgpackEntries);
 
-    with_chatsounds(move |mut chatsounds| async move {
-        let data = chatsounds.fetch_github_api(&name, &path, false).await?;
-        chatsounds.load_github_api(&name, &path, data)?;
+#[wasm_bindgen(js_name = fetchGithubMsgpack)]
+pub async fn fetch_github_msgpack(name: String, path: String) -> Result<JsGitHubMsgpackEntries> {
+    log!("fetch_github_msgpack {:?} {:?}", name, path);
 
-        Ok(())
+    let data = with_chatsounds(move |chatsounds| {
+        async move { Ok(chatsounds.fetch_github_msgpack(&name, &path, false).await?) }.boxed_local()
     })
-    .await
+    .await?;
+
+    Ok(JsGitHubMsgpackEntries(data))
 }
 
-#[wasm_bindgen]
-pub async fn fetch_and_load_github_msgpack(name: String, path: String) -> Result<()> {
-    log!("fetch_and_load_github_msgpack {:?} {:?}", name, path);
+#[wasm_bindgen(js_name = loadGithubMsgpack)]
+pub async fn load_github_msgpack(
+    name: String,
+    path: String,
+    data: JsGitHubMsgpackEntries,
+) -> Result<()> {
+    log!("load_github_msgpack {:?} {:?}", name, path);
 
-    with_chatsounds(move |mut chatsounds| async move {
-        let data = chatsounds.fetch_github_msgpack(&name, &path, false).await?;
-        chatsounds.load_github_msgpack(&name, &path, data)?;
-
-        Ok(())
+    with_mut_chatsounds(move |chatsounds| {
+        async move { Ok(chatsounds.load_github_msgpack(&name, &path, data.0)?) }.boxed_local()
     })
     .await
 }
@@ -58,44 +88,15 @@ pub async fn play(input: String) -> Result<()> {
         return Ok(());
     }
 
-    with_chatsounds(move |mut chatsounds| async move {
-        chatsounds.play(&input, thread_rng()).await?;
+    with_mut_chatsounds(move |chatsounds| {
+        async move {
+            chatsounds.play(&input, thread_rng()).await?;
 
-        Ok(())
+            Ok(())
+        }
+        .boxed_local()
     })
     .await
-}
-
-// #[wasm_bindgen(typescript_custom_section)]
-// pub const SEARCH_RESULT_TYPE: &'static str = r#"
-// interface SearchResult {
-//     sentence: string;
-//     urls: string[];
-// }
-// "#;
-
-// #[derive(Serialize)]
-// pub struct SearchResult {
-//     pub sentence: String,
-//     pub urls: Vec<String>,
-// }
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(typescript_type = "string[]")]
-    pub type StringArray;
-
-    // #[wasm_bindgen(typescript_type = "SearchResult[]")]
-    // pub type SearchResultArray;
-}
-
-impl TryFrom<Vec<&String>> for StringArray {
-    type Error = serde_wasm_bindgen::Error;
-
-    fn try_from(slice: Vec<&String>) -> std::result::Result<Self, Self::Error> {
-        let js_value: JsValue = serde_wasm_bindgen::to_value(&slice)?;
-        Ok(js_value.unchecked_into())
-    }
 }
 
 #[wasm_bindgen]
@@ -103,17 +104,20 @@ pub async fn search(input: String) -> Result<StringArray> {
     log!("search {:?}", &input);
 
     if input.is_empty() {
-        return Ok(Array::new().unchecked_into());
+        return Ok(vec![].try_into()?);
     }
 
-    with_chatsounds(move |chatsounds| async move {
-        let sentences = chatsounds
-            .search(&input)
-            .into_iter()
-            .map(|(_, sentence)| sentence)
-            .collect::<Vec<_>>();
+    with_chatsounds(move |chatsounds| {
+        async move {
+            let sentences = chatsounds
+                .search(&input)
+                .into_iter()
+                .map(|(_, sentence)| sentence)
+                .collect::<Vec<_>>();
 
-        Ok(sentences.try_into()?)
+            Ok(sentences.try_into()?)
+        }
+        .boxed_local()
     })
     .await
 }

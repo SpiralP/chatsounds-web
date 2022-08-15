@@ -1,6 +1,8 @@
 import loadWasm, {
-  fetch_and_load_github_api,
-  fetch_and_load_github_msgpack,
+  fetchGithubApi,
+  fetchGithubMsgpack,
+  loadGithubApi,
+  loadGithubMsgpack,
   play,
   search,
   setup,
@@ -24,9 +26,13 @@ export class Wasm {
     return new Wasm();
   }
 
-  public fetchAndLoadGithubApi = fetch_and_load_github_api;
+  public fetchGithubApi = fetchGithubApi;
 
-  public fetchAndLoadGithubMsgpack = fetch_and_load_github_msgpack;
+  public fetchGithubMsgpack = fetchGithubMsgpack;
+
+  public loadGithubApi = loadGithubApi;
+
+  public loadGithubMsgpack = loadGithubMsgpack;
 
   public play = play;
 

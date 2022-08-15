@@ -25,6 +25,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "async-lock"
+version = "2.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e97a171d191782fba31bb902b14ad94e24a68145032b7eedf871ab0bc0d077b6"
+dependencies = [
+ "event-listener",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -121,8 +130,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 [[package]]
 name = "chatsounds"
 version = "0.1.0"
-source = "git+https://github.com/SpiralP/rust-chatsounds.git#e919811fcbae859d5de5ce9ab97bad1927997732"
+source = "git+https://github.com/SpiralP/rust-chatsounds.git#0bc750d3bf944155db4cfe6d5e33af23a8384270"
 dependencies = [
+ "async-lock",
  "bytes",
  "futures",
  "getrandom",
@@ -142,6 +152,7 @@ dependencies = [
 name = "chatsounds-web"
 version = "0.1.0"
 dependencies = [
+ "async-lock",
  "chatsounds",
  "console_error_panic_hook",
  "futures",
@@ -152,7 +163,6 @@ dependencies = [
  "rodio",
  "serde",
  "serde-wasm-bindgen",
- "thiserror",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -322,6 +332,12 @@ checksum = "9852635589dc9f9ea1b6fe9f05b50ef208c85c834a562f0c6abb1c475736ec2b"
 dependencies = [
  "cfg-if",
 ]
+
+[[package]]
+name = "event-listener"
+version = "2.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0206175f82b8d6bf6652ff7d71a1e27fd2e4efde587fd368662814d6ec1d9ce0"
 
 [[package]]
 name = "fastrand"

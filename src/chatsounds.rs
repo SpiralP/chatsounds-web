@@ -1,29 +1,39 @@
-use chatsounds::Chatsounds;
-use futures::{
-    lock::{MappedMutexGuard, Mutex, MutexGuard},
-    Future,
+use std::{
+    ops::{Deref, DerefMut},
+    pin::Pin,
 };
+
+use async_lock::RwLock;
+use chatsounds::Chatsounds;
+use futures::Future;
 use lazy_static::lazy_static;
 use wasm_bindgen::JsError;
 
 use crate::Result;
 
 lazy_static! {
-    static ref CHATSOUNDS: Mutex<std::result::Result<Chatsounds, String>> =
-        Mutex::new(Chatsounds::new().map_err(|e| e.to_string()));
+    static ref CHATSOUNDS: RwLock<std::result::Result<Chatsounds, String>> =
+        RwLock::new(Chatsounds::new().map_err(|e| e.to_string()));
 }
 
-pub async fn with_chatsounds<'a, T, F, P>(f: F) -> Result<T>
+pub async fn with_chatsounds<T, F>(f: F) -> Result<T>
 where
-    F: FnOnce(MappedMutexGuard<'a, std::result::Result<Chatsounds, String>, Chatsounds>) -> P,
-    P: Future<Output = Result<T>>,
+    F: FnOnce(&Chatsounds) -> Pin<Box<dyn Future<Output = Result<T>> + '_>>,
 {
-    let guard = CHATSOUNDS.lock().await;
-    if let Err(s) = guard.as_ref() {
-        Err(JsError::new(s))
-    } else {
-        let chatsounds = MutexGuard::map(guard, |option| option.as_mut().unwrap());
+    let guard = CHATSOUNDS.read().await;
+    match guard.deref().as_ref() {
+        Err(s) => Err(JsError::new(s)),
+        Ok(chatsounds) => f(chatsounds).await,
+    }
+}
 
-        f(chatsounds).await
+pub async fn with_mut_chatsounds<T, F>(f: F) -> Result<T>
+where
+    F: FnOnce(&mut Chatsounds) -> Pin<Box<dyn Future<Output = Result<T>> + '_>>,
+{
+    let mut guard = CHATSOUNDS.write().await;
+    match guard.deref_mut().as_mut() {
+        Err(s) => Err(JsError::new(s)),
+        Ok(chatsounds) => f(chatsounds).await,
     }
 }
