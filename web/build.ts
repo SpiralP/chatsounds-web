@@ -1,19 +1,22 @@
 import CopyPlugin from "copy-webpack-plugin";
-import { execa } from "execa";
+// import { execa } from "execa";
 import glob from "glob";
 import path from "path";
 
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+import { execa } from "execa";
 import ReactRefreshTypeScript from "react-refresh-typescript";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import { fileURLToPath } from "url";
 import { promisify } from "util";
-import webpack, { WebpackPluginInstance } from "webpack";
-import "webpack-dev-server";
+import webpack from "webpack";
+import WebpackDevServer from "webpack-dev-server";
 
 const globAsync = promisify(glob);
 
-const isDevelopment = process.env.NODE_ENV !== "production";
+const isProduction = process.env.NODE_ENV === "production";
+const isDev = process.argv[2] === "dev";
+
 const DIR_NAME = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(DIR_NAME, "..");
 
@@ -30,12 +33,13 @@ const AutoBuildWasmPlugin: webpack.WebpackPluginInstance = {
     };
 
     const build = () =>
-      execa("yarn", ["build:wasm", isDevelopment ? "--dev" : "--release"], {
+      execa("yarn", ["build:wasm", isProduction ? "--release" : "--dev"], {
         stderr: "inherit",
         stdout: "inherit",
       }).catch(() => {
         // everything already screams
       });
+
     compiler.hooks.run.tapPromise("build wasm", async (_compiler) => {
       await build();
     });
@@ -76,11 +80,9 @@ const config: webpack.Configuration = {
           loader: "ts-loader",
           options: {
             getCustomTransformers: () => ({
-              before: [isDevelopment && ReactRefreshTypeScript()].filter(
-                Boolean
-              ),
+              before: isDev ? [ReactRefreshTypeScript()] : [],
             }),
-            transpileOnly: isDevelopment,
+            transpileOnly: isDev,
           },
         },
       },
@@ -97,9 +99,9 @@ const config: webpack.Configuration = {
   plugins: [
     new CopyPlugin({ patterns: ["./src/index.html"] }),
     AutoBuildWasmPlugin,
-    isDevelopment && new ReactRefreshWebpackPlugin(),
-  ].filter((a): a is WebpackPluginInstance => Boolean(a)),
-  mode: isDevelopment ? "development" : "production",
+    ...(isDev ? [new ReactRefreshWebpackPlugin()] : []),
+  ],
+  mode: isProduction ? "production" : "development",
   experiments: {
     asyncWebAssembly: true,
   },
@@ -108,4 +110,14 @@ const config: webpack.Configuration = {
   },
 };
 
-export default config;
+const compiler = webpack(config);
+if (isDev) {
+  const server = new WebpackDevServer(config.devServer, compiler);
+  server.start().catch(console.error);
+} else {
+  compiler.run((err, stats) => {
+    if (err || stats?.hasErrors()) {
+      console.error(err);
+    }
+  });
+}
