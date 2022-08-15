@@ -1,9 +1,19 @@
+import { Menu } from "@blueprintjs/core";
 import debounce from "lodash.debounce";
 import React from "react";
+import { usePrevious } from "react-use";
 import ChatsoundsResult from "/components/ChatsoundsResult";
 import useWasm from "/hooks/useWasm";
 
-export default function ChatsoundsSearchResults({ input }: { input: string }) {
+export default function ChatsoundsSearchResults({
+  input,
+  onSetInput,
+  tabSelection,
+}: {
+  input: string;
+  onSetInput: (input: string, play?: boolean) => void;
+  tabSelection: number | null;
+}) {
   const { search } = useWasm();
 
   const [results, setResults] = React.useState<string[]>([]);
@@ -12,7 +22,7 @@ export default function ChatsoundsSearchResults({ input }: { input: string }) {
     () =>
       debounce(async (input: string) => {
         const results = await search(input);
-        setResults(results.slice(0, 10));
+        setResults(results);
       }, 200),
     [search]
   );
@@ -21,11 +31,39 @@ export default function ChatsoundsSearchResults({ input }: { input: string }) {
     updateSearch(input);
   }, [input, updateSearch]);
 
+  const lastTabSelection = usePrevious(tabSelection);
+  React.useEffect(() => {
+    if (tabSelection !== null && tabSelection !== lastTabSelection) {
+      const result = results[tabSelection];
+      if (result) {
+        onSetInput(result);
+      }
+    }
+  }, [lastTabSelection, onSetInput, results, tabSelection]);
+
+  const visibleResults = React.useMemo(
+    () => results.slice(tabSelection || 0, (tabSelection || 0) + 10),
+    [results, tabSelection]
+  );
+
+  const resultClicked = React.useCallback(
+    (result: string) => {
+      onSetInput(result, true);
+    },
+    [onSetInput]
+  );
+
   return (
     <div>
-      {results.map((result) => (
-        <ChatsoundsResult key={result} result={result} />
-      ))}
+      <Menu>
+        {visibleResults.map((result) => (
+          <ChatsoundsResult
+            key={result}
+            onClick={resultClicked}
+            result={result}
+          />
+        ))}
+      </Menu>
     </div>
   );
 }

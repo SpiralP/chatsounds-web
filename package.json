@@ -17,6 +17,7 @@
   "dependencies": {
     "@blueprintjs/core": "^4.8.0",
     "@blueprintjs/eslint-plugin": "^2.2.0",
+    "@blueprintjs/icons": "^4.4.1",
     "@blueprintjs/popover2": "^1.5.1",
     "@blueprintjs/select": "^4.5.3",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
@@ -30,6 +31,7 @@
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/eslint-plugin-tslint": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
+    "can-autoplay": "^3.0.2",
     "chatsounds-web": "./pkg",
     "concurrently": "^7.3.0",
     "copy-webpack-plugin": "^11.0.0",
@@ -50,11 +52,13 @@
     "execa": "^6.1.0",
     "glob": "^8.0.3",
     "lodash.debounce": "^4.0.8",
+    "normalize.css": "^8.0.1",
     "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-refresh": "^0.14.0",
     "react-refresh-typescript": "^2.0.7",
+    "react-use": "^17.4.0",
     "rimraf": "^3.0.2",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.3.1",
@@ -68,5 +72,8 @@
   },
   "resolutions": {
     "chatsounds-web": "portal:pkg"
+  },
+  "devDependencies": {
+    "@types/can-autoplay": "^3"
   }
 }

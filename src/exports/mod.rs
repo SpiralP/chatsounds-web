@@ -90,7 +90,11 @@ pub async fn play(input: String) -> Result<()> {
 
     with_mut_chatsounds(move |chatsounds| {
         async move {
-            chatsounds.play(&input, thread_rng()).await?;
+            if input == "sh" {
+                chatsounds.stop_all();
+            } else {
+                chatsounds.play(&input, thread_rng()).await?;
+            }
 
             Ok(())
         }
