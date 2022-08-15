@@ -68,10 +68,11 @@ pub async fn fetch_and_load_github_msgpack(name: String, path: String) {
 
 #[wasm_bindgen]
 pub async fn play(input: String) {
+    log!("play {:?}", &input);
+
     if input.is_empty() {
         return;
     }
-    log!("play {:?}", &input);
 
     let mut chatsounds = CHATSOUNDS.lock().await;
     let chatsounds = chatsounds.as_mut().expect("chatsounds None");
@@ -88,6 +89,10 @@ extern "C" {
 #[wasm_bindgen(typescript_type = "string[]")]
 pub async fn search(input: String) -> StringArray {
     log!("search {:?}", &input);
+
+    if input.is_empty() {
+        return Array::new().unchecked_into();
+    }
 
     let mut chatsounds = CHATSOUNDS.lock().await;
     let chatsounds = chatsounds.as_mut().expect("chatsounds None");
