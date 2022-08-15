@@ -12,7 +12,7 @@ export default function ChatsoundsSearchResults({ input }: { input: string }) {
     () =>
       debounce(async (input: string) => {
         const results = await search(input);
-        setResults(results);
+        setResults(results.slice(0, 10));
       }, 200),
     [search]
   );

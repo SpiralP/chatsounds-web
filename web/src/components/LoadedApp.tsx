@@ -16,7 +16,7 @@ export default function LoadedApp() {
         setLoading(false);
         setLoaded(true);
       },
-      (e) => {
+      (e: any) => {
         // TODO
         console.error(e);
       }

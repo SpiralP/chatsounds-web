@@ -117,7 +117,7 @@ if (isDev) {
 } else {
   compiler.run((err, stats) => {
     if (err || stats?.hasErrors()) {
-      console.error(err);
+      console.error(err, stats);
     }
   });
 }
