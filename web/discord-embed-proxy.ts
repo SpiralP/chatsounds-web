@@ -49,30 +49,34 @@ const getChatsoundBuffer = memoizee(
       console.log({ input });
 
       try {
-        await fs.promises.unlink(OUTPUT_WAV);
-      } catch {
-        //
+        try {
+          await fs.promises.unlink(OUTPUT_WAV);
+        } catch {
+          //
+        }
+
+        await execFileAsync(CHATSOUNDS_CLI, [input]);
+
+        if (await exists(OUTPUT_WAV)) {
+          const buffer = await new Promise<Buffer>((resolve, reject) => {
+            ffmpeg(OUTPUT_WAV)
+              .inputOptions(["-hide_banner", "-loglevel", "warning"])
+              .input("color=c=black:s=120x120")
+              .inputFormat("lavfi")
+              .addOutputOptions(["-shortest"])
+              .outputFormat("webm")
+              .on("error", reject)
+              .on("stderr", console.warn)
+              .pipe(concat(resolve));
+          });
+
+          return buffer;
+        }
+      } catch (e) {
+        console.error(e);
+        return null;
       }
 
-      const cmd = await execFileAsync(CHATSOUNDS_CLI, [input]);
-
-      if (await exists(OUTPUT_WAV)) {
-        const buffer = await new Promise<Buffer>((resolve, reject) => {
-          ffmpeg(OUTPUT_WAV)
-            .inputOptions(["-hide_banner", "-loglevel", "warning"])
-            .input("color=c=black:s=120x120")
-            .inputFormat("lavfi")
-            .addOutputOptions(["-shortest"])
-            .outputFormat("webm")
-            .on("error", reject)
-            .on("stderr", console.warn)
-            .pipe(concat(resolve));
-        });
-
-        return buffer;
-      }
-
-      console.error(cmd.stderr, cmd.stdout);
       return null;
     }),
   {
