@@ -44,6 +44,12 @@ const getChatsoundBuffer = memoizee(
   async (input: string) => {
     console.log({ input });
 
+    try {
+      await fs.promises.unlink(OUTPUT_WAV);
+    } catch {
+      //
+    }
+
     const cmd = await execFileAsync(CHATSOUNDS_CLI, [input]);
 
     if (await exists(OUTPUT_WAV)) {
