@@ -19,6 +19,7 @@ jobs:
       - name: Install rust nightly
         uses: actions-rs/toolchain@v1
         with:
+          target: wasm32-unknown-unknown
           toolchain: nightly
           override: true
 
