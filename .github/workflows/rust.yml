@@ -25,8 +25,22 @@ jobs:
       - name: Install wasm-pack
         run: curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
 
+      - name: Cache target
+        id: cache-target
+        uses: actions/cache@v3
+        with:
+          path: target
+          key: ${{ runner.os }}-target
+
       - name: Build wasm
         run: npm run build:wasm
+
+      - name: Cache node_modules
+        id: cache-node_modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node_modules
 
       - name: Install yarn packages
         run: yarn install
