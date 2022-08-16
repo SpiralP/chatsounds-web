@@ -469,6 +469,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/async-lock@npm:^1":
+  version: 1.1.5
+  resolution: "@types/async-lock@npm:1.1.5"
+  checksum: 0e54293601fa43bd4f7641020ad04f063a8dd3df4cf9198194ddaa13660534815bb75d6571dbcad6e9c3757104c02a49f58bbe791204c6d89bc948ab8482cfed
+  languageName: node
+  linkType: hard
+
 "@types/babel__core@npm:*":
   version: 7.1.19
   resolution: "@types/babel__core@npm:7.1.19"
@@ -1482,6 +1489,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"async-lock@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "async-lock@npm:1.3.2"
+  checksum: d66d6163d4a5c1d09f60118d850da53394a2b8ccae28e0613a88fc33e8b0c2b3266c4f6ed0bc5c9889ad8a926fc886a3e06600775c7264289e8814e39018cd7f
+  languageName: node
+  linkType: hard
+
 "async@npm:>=0.2.9":
   version: 3.2.4
   resolution: "async@npm:3.2.4"
@@ -1769,6 +1783,7 @@ __metadata:
     "@blueprintjs/popover2": ^1.5.1
     "@blueprintjs/select": ^4.5.3
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.7
+    "@types/async-lock": ^1
     "@types/can-autoplay": ^3
     "@types/concat-stream": ^2
     "@types/eslint": ^8
@@ -1785,6 +1800,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.33.0
     "@typescript-eslint/eslint-plugin-tslint": ^5.33.0
     "@typescript-eslint/parser": ^5.33.0
+    async-lock: ^1.3.2
     can-autoplay: ^3.0.2
     chatsounds-web: ./pkg
     concat-stream: ^2.0.0

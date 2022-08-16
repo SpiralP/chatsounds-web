@@ -1,3 +1,4 @@
+import AsyncLock from "async-lock";
 import { execFile } from "child_process";
 import concat from "concat-stream";
 import express from "express";
@@ -40,37 +41,40 @@ async function exists(path: string) {
 
 const app = express();
 
+const lock = new AsyncLock();
+
 const getChatsoundBuffer = memoizee(
-  async (input: string) => {
-    console.log({ input });
+  async (input: string): Promise<Buffer | null> =>
+    lock.acquire("bap", async () => {
+      console.log({ input });
 
-    try {
-      await fs.promises.unlink(OUTPUT_WAV);
-    } catch {
-      //
-    }
+      try {
+        await fs.promises.unlink(OUTPUT_WAV);
+      } catch {
+        //
+      }
 
-    const cmd = await execFileAsync(CHATSOUNDS_CLI, [input]);
+      const cmd = await execFileAsync(CHATSOUNDS_CLI, [input]);
 
-    if (await exists(OUTPUT_WAV)) {
-      const buffer = await new Promise<Buffer>((resolve, reject) => {
-        ffmpeg(OUTPUT_WAV)
-          .inputOptions(["-hide_banner", "-loglevel", "warning"])
-          .input("color=c=black:s=120x120")
-          .inputFormat("lavfi")
-          .addOutputOptions(["-shortest"])
-          .outputFormat("webm")
-          .on("error", reject)
-          .on("stderr", console.warn)
-          .pipe(concat(resolve));
-      });
+      if (await exists(OUTPUT_WAV)) {
+        const buffer = await new Promise<Buffer>((resolve, reject) => {
+          ffmpeg(OUTPUT_WAV)
+            .inputOptions(["-hide_banner", "-loglevel", "warning"])
+            .input("color=c=black:s=120x120")
+            .inputFormat("lavfi")
+            .addOutputOptions(["-shortest"])
+            .outputFormat("webm")
+            .on("error", reject)
+            .on("stderr", console.warn)
+            .pipe(concat(resolve));
+        });
 
-      return buffer;
-    }
+        return buffer;
+      }
 
-    console.error(cmd.stderr, cmd.stdout);
-    return undefined;
-  },
+      console.error(cmd.stderr, cmd.stdout);
+      return null;
+    }),
   {
     // cache for 1 minute
     maxAge: 1000 * 60,
