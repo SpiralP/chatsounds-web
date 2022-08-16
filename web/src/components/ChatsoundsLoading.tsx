@@ -1,7 +1,12 @@
-import { Spinner, SpinnerSize } from "@blueprintjs/core";
+import { Intent, Spinner, SpinnerSize } from "@blueprintjs/core";
 import React from "react";
 import Chatsounds from "/components/Chatsounds";
+import useToaster from "/hooks/useToaster";
 import useWasm from "/hooks/useWasm";
+
+function nonNullable<T>(value: T): value is NonNullable<T> {
+  return value !== null && value !== undefined;
+}
 
 const SOURCES: Array<["api" | "msgpack", string, string]> = [
   ["msgpack", "PAC3-Server/chatsounds-valve-games", "csgo"],
@@ -27,6 +32,7 @@ export default function ChatsoundsLoading() {
     loadGithubMsgpack,
   } = useWasm();
 
+  const toaster = useToaster();
   const [done, setDone] = React.useState(false);
   const [amountLoaded, setAmountLoaded] = React.useState(0);
 
@@ -36,8 +42,8 @@ export default function ChatsoundsLoading() {
     (async () => {
       const beforeFetching = Date.now();
       const fetchingPromises = SOURCES.map(async (source) => {
+        const [kind, name, path] = source;
         const value = await (async () => {
-          const [kind, name, path] = source;
           if (kind === "api") {
             return [
               kind,
@@ -53,7 +59,13 @@ export default function ChatsoundsLoading() {
             ] as const;
           }
           throw new Error("unreachable");
-        })();
+        })().catch((e: Error) => {
+          toaster.show({
+            intent: Intent.WARNING,
+            message: `Failed to fetch ${name} ${path}: ${e?.message}`,
+          });
+          return null;
+        });
         setAmountLoaded((amountLoaded) => amountLoaded + 1);
         return value;
       });
@@ -63,23 +75,36 @@ export default function ChatsoundsLoading() {
 
       const beforeLoading = Date.now();
       await Promise.all(
-        datas.map(async ([kind, [name, path], data]) => {
-          if (kind === "api") {
-            await loadGithubApi(name, path, data);
-          } else if (kind === "msgpack") {
-            await loadGithubMsgpack(name, path, data);
-          }
+        datas.filter(nonNullable).map(async ([kind, [name, path], data]) => {
+          await (async () => {
+            if (kind === "api") {
+              await loadGithubApi(name, path, data);
+            } else if (kind === "msgpack") {
+              await loadGithubMsgpack(name, path, data);
+            }
+          })().catch((e: Error) => {
+            toaster.show({
+              intent: Intent.WARNING,
+              message: `Failed to load ${name} ${path}: ${e?.message}`,
+            });
+            return null;
+          });
         })
       );
       console.log("loading took", Date.now() - beforeLoading);
 
       setDone(true);
-    })().catch((e: any) => {
-      // TODO
+    })().catch((e: Error) => {
       console.error(e);
       setDone(true);
     });
-  }, [fetchGithubApi, fetchGithubMsgpack, loadGithubApi, loadGithubMsgpack]);
+  }, [
+    fetchGithubApi,
+    fetchGithubMsgpack,
+    loadGithubApi,
+    loadGithubMsgpack,
+    toaster,
+  ]);
 
   if (done) {
     return <Chatsounds />;

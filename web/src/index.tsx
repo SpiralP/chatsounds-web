@@ -6,6 +6,7 @@ import "normalize.css/normalize.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "/components/App";
+import { createToaster, ToasterContext } from "/hooks/useToaster";
 import "/styles/index.css";
 
 function main() {
@@ -16,7 +17,13 @@ function main() {
     throw new Error("!root");
   }
 
-  ReactDOM.createRoot(root).render(<App />);
+  const toaster = createToaster();
+
+  ReactDOM.createRoot(root).render(
+    <ToasterContext.Provider value={toaster}>
+      <App />
+    </ToasterContext.Provider>
+  );
 }
 
 main();

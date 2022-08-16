@@ -1,17 +1,25 @@
 import { InputGroup } from "@blueprintjs/core";
 import React from "react";
-import { useLocation, useMount } from "react-use";
+import { useMount } from "react-use";
 import ChatsoundsSearchResults from "/components/ChatsoundsSearchResults";
 import useWasm from "/hooks/useWasm";
 
-/** (including #) */
-function encodeHash(input: string): string {
-  return `#${input.replace(/ /g, "+")}`;
+type HistoryState = {
+  input?: string;
+};
+
+function setQuery(input: string) {
+  const query = input.replace(/ /g, "+");
+  // need to include the ?
+  const url = `${window.location.origin}?${query}`;
+  const state: HistoryState = { input };
+  window.history.pushState(state, "", url);
 }
 
-/** (including #) */
-function decodeHash(hash: string): string {
-  return hash.slice(1).replace(/\+/g, " ");
+function decodeQuery(): string {
+  // includes the ?
+  const query = window.location.search || "";
+  return query.slice(1).replace(/\+/g, " ");
 }
 
 export default function Chatsounds() {
@@ -20,19 +28,27 @@ export default function Chatsounds() {
   const [input, setInput] = React.useState("");
   const [search, setSearch] = React.useState("");
 
-  const { hash } = useLocation();
   useMount(() => {
-    const input = decodeHash(hash || "");
+    const input = decodeQuery();
     if (input) {
       setInput(input);
       setSearch(input);
       play(input);
     }
-  });
 
-  React.useEffect(() => {
-    window.location.hash = encodeHash(input);
-  }, [input]);
+    window.addEventListener("popstate", (event) => {
+      if (typeof event.state !== "object") {
+        return;
+      }
+
+      const { input } = event.state as HistoryState;
+      if (input) {
+        console.log({ input });
+        setInput(input);
+        setSearch(input);
+      }
+    });
+  });
 
   const [tabSelection, setTabSelection] = React.useState<number | null>(null);
 
@@ -49,6 +65,7 @@ export default function Chatsounds() {
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") {
         play(input);
+        setQuery(input);
       } else if (event.key === "Tab") {
         event.preventDefault();
         setTabSelection((tabSelection) => {
@@ -70,6 +87,7 @@ export default function Chatsounds() {
       setInput(input);
       if (shouldPlay) {
         play(input);
+        setQuery(input);
       }
     },
     [play]
