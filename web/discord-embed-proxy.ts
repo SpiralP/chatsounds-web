@@ -50,7 +50,7 @@ const getChatsoundBuffer = memoizee(
       const buffer = await new Promise<Buffer>((resolve, reject) => {
         ffmpeg(OUTPUT_WAV)
           .inputOptions(["-hide_banner", "-loglevel", "warning"])
-          .input("color=c=black:s=2x2")
+          .input("color=c=black:s=120x120")
           .inputFormat("lavfi")
           .addOutputOptions(["-shortest"])
           .outputFormat("webm")
