@@ -1,0 +1,10 @@
+*
+!/Cargo.toml
+!/Cargo.lock
+!/package.json
+!/yarn.lock
+!/.yarnrc.yml
+!/.yarn/plugins/
+!/.yarn/releases/
+!/src
+!/web

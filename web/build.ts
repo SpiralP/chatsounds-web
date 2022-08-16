@@ -1,3 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
+
 import CopyPlugin from "copy-webpack-plugin";
 // import { execa } from "execa";
 import glob from "glob";
