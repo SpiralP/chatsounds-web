@@ -16,7 +16,7 @@ lazy_static! {
         RwLock::new(Chatsounds::new().map_err(|e| e.to_string()));
 }
 
-pub async fn with_chatsounds<T, F>(f: F) -> Result<T>
+pub async fn with<T, F>(f: F) -> Result<T>
 where
     F: FnOnce(&Chatsounds) -> Pin<Box<dyn Future<Output = Result<T>> + '_>>,
 {
@@ -27,7 +27,7 @@ where
     }
 }
 
-pub async fn with_mut_chatsounds<T, F>(f: F) -> Result<T>
+pub async fn with_mut<T, F>(f: F) -> Result<T>
 where
     F: FnOnce(&mut Chatsounds) -> Pin<Box<dyn Future<Output = Result<T>> + '_>>,
 {
