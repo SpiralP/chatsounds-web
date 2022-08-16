@@ -130,7 +130,7 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 [[package]]
 name = "chatsounds"
 version = "0.1.0"
-source = "git+https://github.com/SpiralP/rust-chatsounds.git#0bc750d3bf944155db4cfe6d5e33af23a8384270"
+source = "git+https://github.com/SpiralP/rust-chatsounds.git#33ca60e7e51b1bcb01da8cbc317e1c00636663bf"
 dependencies = [
  "async-lock",
  "bytes",
@@ -160,7 +160,6 @@ dependencies = [
  "lazy_static",
  "rand",
  "reqwest",
- "rodio",
  "serde",
  "serde-wasm-bindgen",
  "wasm-bindgen",

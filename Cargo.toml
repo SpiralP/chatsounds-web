@@ -9,14 +9,13 @@ crate-type = ["cdylib"]
 
 [dependencies]
 async-lock = "2"
-chatsounds = { git = "https://github.com/SpiralP/rust-chatsounds.git", default-features = false, features = ["memory", "playback", "wasm"] }
+chatsounds = { git = "https://github.com/SpiralP/rust-chatsounds.git", default-features = false, features = ["memory", "playback", "vorbis", "wasm"] }
 console_error_panic_hook = "0.1"
 futures = "0.3"
 js-sys = "0.3"
 lazy_static = "1"
 rand = "0.8"
 reqwest = "0.11"
-rodio = { version = "0.15", default-features = false, features = ["wasm-bindgen", "vorbis"] }
 serde = { version = "1", features = ["derive"] }
 serde-wasm-bindgen = "0.4"
 wasm-bindgen = "0.2"
