@@ -1,10 +1,10 @@
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-import CopyPlugin from "copy-webpack-plugin";
 import { execa } from "execa";
 import glob from "glob";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
 import ReactRefreshTypeScript from "react-refresh-typescript";
-import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
+import TsconfigPathsWebpackPlugin from "tsconfig-paths-webpack-plugin";
 import { fileURLToPath } from "url";
 import { promisify } from "util";
 import webpack from "webpack";
@@ -66,7 +66,7 @@ const config: webpack.Configuration = {
   entry: "./src/index.tsx",
   output: {
     path: path.join(PROJECT_ROOT, "dist"),
-    filename: "index.js",
+    filename: "[contenthash].js",
   },
   devtool: "source-map",
   module: {
@@ -92,12 +92,16 @@ const config: webpack.Configuration = {
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
-    plugins: [new TsconfigPathsPlugin({ configFile: "./tsconfig.json" })],
+    plugins: [
+      new TsconfigPathsWebpackPlugin({ configFile: "./tsconfig.json" }),
+    ],
   },
   plugins: [
-    new CopyPlugin({ patterns: ["./src/index.html"] }),
     AutoBuildWasmPlugin,
     ...(isDev ? [new ReactRefreshWebpackPlugin()] : []),
+    new HtmlWebpackPlugin({
+      template: path.join(DIR_NAME, "src", "index.html"),
+    }),
   ],
   mode: isProduction ? "production" : "development",
   experiments: {
@@ -111,11 +115,15 @@ const config: webpack.Configuration = {
 const compiler = webpack(config);
 if (isDev) {
   const server = new WebpackDevServer(config.devServer, compiler);
-  server.start().catch(console.error);
+  server.start().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
 } else {
   compiler.run((err, stats) => {
     if (err || stats?.hasErrors()) {
-      console.error(err, stats);
+      console.error(err, stats?.toString());
+      process.exit(1);
     }
   });
 }

@@ -8,10 +8,8 @@ import "/styles/index.css";
 function main() {
   FocusStyleManager.onlyShowFocusOnTabs();
 
-  const root = document.getElementById("root");
-  if (!root) {
-    throw new Error("!root");
-  }
+  const root = document.createElement("div");
+  document.body.appendChild(root);
 
   const toaster = createToaster();
 
