@@ -11,7 +11,7 @@ type HistoryState = {
 function setQuery(input: string) {
   const query = input.replace(/ /g, "+");
   // need to include the ?
-  const url = `${window.location.origin}?${query}`;
+  const url = `${window.location.origin}${window.location.pathname}?${query}`;
   const state: HistoryState = { input };
   window.history.pushState(state, "", url);
 }

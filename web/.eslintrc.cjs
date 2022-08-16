@@ -40,5 +40,6 @@ module.exports = {
     "jsx-a11y/media-has-caption": "off",
     "no-console": "off",
     "jsx-a11y/no-static-element-interactions": "off",
+    "import/no-extraneous-dependencies": "off",
   },
 };

@@ -1,12 +1,8 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
+import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import CopyPlugin from "copy-webpack-plugin";
-// import { execa } from "execa";
+import { execa } from "execa";
 import glob from "glob";
 import path from "path";
-
-import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-import { execa } from "execa";
 import ReactRefreshTypeScript from "react-refresh-typescript";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import { fileURLToPath } from "url";
