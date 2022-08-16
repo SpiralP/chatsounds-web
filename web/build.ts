@@ -68,7 +68,7 @@ const config: webpack.Configuration = {
     path: path.join(PROJECT_ROOT, "dist"),
     filename: "index.js",
   },
-  devtool: "inline-source-map",
+  devtool: "source-map",
   module: {
     rules: [
       {
