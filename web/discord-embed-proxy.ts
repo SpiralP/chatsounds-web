@@ -46,16 +46,18 @@ const lock = new AsyncLock();
 const getChatsoundBuffer = memoizee(
   async (input: string): Promise<Buffer | null> =>
     lock.acquire("bap", async () => {
-      console.log({ input });
-
       try {
+        console.log("exec", { input });
+
         try {
           await fs.promises.unlink(OUTPUT_WAV);
         } catch {
           //
         }
 
-        await execFileAsync(CHATSOUNDS_CLI, [input]);
+        const cmd = await execFileAsync(CHATSOUNDS_CLI, [input]);
+        console.log(cmd.stdout);
+        console.warn(cmd.stderr);
 
         if (await exists(OUTPUT_WAV)) {
           const buffer = await new Promise<Buffer>((resolve, reject) => {
@@ -72,12 +74,12 @@ const getChatsoundBuffer = memoizee(
 
           return buffer;
         }
+
+        return null;
       } catch (e) {
         console.error(e);
         return null;
       }
-
-      return null;
     }),
   {
     // cache for 1 minute
@@ -96,9 +98,16 @@ app.get("/", async (req, res, next) => {
     (userAgent.includes(DISCORD_USER_AGENT) ||
       userAgent.includes(VIDEO_USER_AGENT))
   ) {
+    console.log({ input });
+
     const buffer = await getChatsoundBuffer(input);
-    res.type("webm");
-    res.send(buffer);
+    if (buffer?.length) {
+      res.type("webm").send(buffer);
+      return;
+    }
+
+    console.warn("buffer null or empty");
+    res.status(503).send();
     return;
   }
 
