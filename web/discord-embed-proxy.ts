@@ -1,7 +1,7 @@
 import AsyncLock from "async-lock";
 import { execFile } from "child_process";
 import concat from "concat-stream";
-import express from "express";
+import express, { Response } from "express";
 import ffmpegPath from "ffmpeg-static";
 import ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
@@ -20,7 +20,11 @@ const VIDEO_USER_AGENT =
 const DIR_NAME = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_DIR = path.resolve(DIR_NAME, "..");
 
-const CHATSOUNDS_CLI = path.join(PROJECT_DIR, "chatsounds-cli");
+const CHATSOUNDS_CLI = path.join(
+  PROJECT_DIR,
+  process.platform === "win32" ? "chatsounds-cli.exe" : "chatsounds-cli"
+);
+
 const OUTPUT_WAV = "./output.wav";
 
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -43,11 +47,15 @@ const app = express();
 
 const lock = new AsyncLock();
 
+const EXTENSIONS = ["mp4", "webm", "ogg", "mp3"] as const;
+type Extension = typeof EXTENSIONS[number];
+const DEFAULT_EXT: Extension = "mp4";
+
 const getChatsoundBuffer = memoizee(
-  async (input: string): Promise<Buffer | null> =>
+  async (sentence: string, ext: Extension): Promise<Buffer | null> =>
     lock.acquire("bap", async () => {
       try {
-        console.log("exec", { input });
+        console.log("exec", { sentence, ext });
 
         try {
           await fs.promises.unlink(OUTPUT_WAV);
@@ -55,18 +63,31 @@ const getChatsoundBuffer = memoizee(
           //
         }
 
-        const cmd = await execFileAsync(CHATSOUNDS_CLI, [input]);
+        const cmd = await execFileAsync(CHATSOUNDS_CLI, [sentence]);
         console.log(cmd.stdout);
         console.warn(cmd.stderr);
 
         if (await exists(OUTPUT_WAV)) {
           const buffer = await new Promise<Buffer>((resolve, reject) => {
-            ffmpeg(OUTPUT_WAV)
-              .inputOptions(["-hide_banner", "-loglevel", "warning"])
-              .input("color=c=black:s=120x120")
-              .inputFormat("lavfi")
-              .addOutputOptions(["-shortest"])
-              .outputFormat("webm")
+            let f = ffmpeg(OUTPUT_WAV).inputOptions([
+              "-hide_banner",
+              "-loglevel",
+              "warning",
+            ]);
+
+            if (ext === "mp4" || ext === "webm") {
+              // add a black video for video formats
+              f = f
+                .input("color=c=black:s=120x120")
+                .inputFormat("lavfi")
+                .addOutputOptions(["-shortest"]);
+
+              if (ext === "mp4") {
+                f = f.addOutputOptions(["-movflags", "empty_moov"]);
+              }
+            }
+
+            f.outputFormat(ext)
               .on("error", reject)
               .on("stderr", console.warn)
               .pipe(concat(resolve));
@@ -88,26 +109,37 @@ const getChatsoundBuffer = memoizee(
   }
 );
 
+async function respondMedia(sentence: string, ext: Extension, res: Response) {
+  const buffer = await getChatsoundBuffer(sentence, ext);
+  if (buffer?.length) {
+    res.type(ext).send(buffer);
+  } else {
+    console.warn("buffer null or empty");
+    res.status(503).send();
+  }
+}
+
 app.get("/", async (req, res, next) => {
   const { search } = url.parse(req.url);
   const input = search?.slice(1).replace(/\+/g, " ");
   const userAgent = req.headers["user-agent"] || "";
+
+  if (input) {
+    const match = /^(.+)\.(.+?)$/.exec(input) || [];
+    const sentenceMatch = match[1] || "";
+    const extMatch = match[2] as Extension | undefined;
+    if (sentenceMatch && extMatch && EXTENSIONS.includes(extMatch)) {
+      await respondMedia(sentenceMatch, extMatch, res);
+      return;
+    }
+  }
 
   if (
     input &&
     (userAgent.includes(DISCORD_USER_AGENT) ||
       userAgent.includes(VIDEO_USER_AGENT))
   ) {
-    console.log({ input });
-
-    const buffer = await getChatsoundBuffer(input);
-    if (buffer?.length) {
-      res.type("webm").send(buffer);
-      return;
-    }
-
-    console.warn("buffer null or empty");
-    res.status(503).send();
+    await respondMedia(input, DEFAULT_EXT, res);
     return;
   }
 
