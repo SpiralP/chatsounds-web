@@ -1,34 +1,24 @@
-import { Callout, Intent, Spinner, SpinnerSize } from "@blueprintjs/core";
+import { IToaster, Position, Toaster } from "@blueprintjs/core";
 import React from "react";
-import LoadedApp from "/components/LoadedApp";
-import { useWasmStateInfo, WasmContext, WasmState } from "/hooks/useWasm";
+import WasmLoading from "/components/WasmLoading";
+import { ToasterContext } from "/hooks/useToaster";
 
 export default function App() {
-  const wasmStateInfo = useWasmStateInfo();
+  const toasterRef = React.useRef<Toaster>(null);
+  const [toaster, setToaster] = React.useState<IToaster | null>(null);
 
-  switch (wasmStateInfo.state) {
-    case WasmState.Loaded: {
-      return (
-        <WasmContext.Provider value={wasmStateInfo.wasm}>
-          <LoadedApp />
-        </WasmContext.Provider>
-      );
-    }
+  React.useEffect(() => {
+    setToaster(toasterRef.current);
+  }, []);
 
-    case WasmState.Loading: {
-      return (
-        <div className="centered">
-          <Spinner size={SpinnerSize.LARGE} />
-        </div>
-      );
-    }
-
-    case WasmState.Error: {
-      return <Callout intent={Intent.DANGER} title={wasmStateInfo.error} />;
-    }
-
-    default: {
-      throw new Error("unreachable");
-    }
-  }
+  return (
+    <>
+      {toaster ? (
+        <ToasterContext.Provider value={toaster}>
+          <WasmLoading />
+        </ToasterContext.Provider>
+      ) : null}
+      <Toaster ref={toasterRef} position={Position.BOTTOM_RIGHT} />
+    </>
+  );
 }

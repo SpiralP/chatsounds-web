@@ -5,7 +5,7 @@ import { useMount } from "react-use";
 import ChatsoundsLoading from "/components/ChatsoundsLoading";
 import useWasm from "/hooks/useWasm";
 
-export default function LoadedApp() {
+export default function WasmLoaded() {
   const wasm = useWasm();
 
   const [loaded, setLoaded] = React.useState(false);
@@ -18,7 +18,7 @@ export default function LoadedApp() {
         setLoading(false);
         setLoaded(true);
       },
-      (e: any) => {
+      (e: Error) => {
         // TODO
         console.error(e);
       }
