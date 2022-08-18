@@ -30,7 +30,7 @@ pub async fn fetch_github_api(name: String, path: String) -> Result<JsGitHubApiT
     log!("fetch_github_api {:?} {:?}", name, path);
 
     let data = chatsounds::with(|chatsounds| {
-        async move { Ok(chatsounds.fetch_github_api(&name, &path, false).await?) }.boxed_local()
+        async move { Ok(chatsounds.fetch_github_api(&name, &path).await?) }.boxed_local()
     })
     .await?;
 
@@ -55,7 +55,7 @@ pub async fn fetch_github_msgpack(name: String, path: String) -> Result<JsGitHub
     log!("fetch_github_msgpack {:?} {:?}", name, path);
 
     let data = chatsounds::with(|chatsounds| {
-        async move { Ok(chatsounds.fetch_github_msgpack(&name, &path, false).await?) }.boxed_local()
+        async move { Ok(chatsounds.fetch_github_msgpack(&name, &path).await?) }.boxed_local()
     })
     .await?;
 
