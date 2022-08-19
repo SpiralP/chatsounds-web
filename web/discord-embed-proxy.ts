@@ -9,6 +9,7 @@ import memoizee from "memoizee";
 import path from "path";
 import url, { fileURLToPath } from "url";
 import { promisify } from "util";
+import { decodeComponent } from "./src/utils.js";
 
 const PORT = process.env.PORT || 8080;
 
@@ -121,7 +122,7 @@ async function respondMedia(sentence: string, ext: Extension, res: Response) {
 
 app.get("/", async (req, res, next) => {
   const { search } = url.parse(req.url);
-  const input = search?.slice(1).replace(/\+/g, " ");
+  const input = decodeComponent(search?.slice(1) || "");
   const userAgent = req.headers["user-agent"] || "";
 
   if (input) {

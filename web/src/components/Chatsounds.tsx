@@ -3,13 +3,14 @@ import React from "react";
 import { useMount } from "react-use";
 import ChatsoundsSearchResults from "/components/ChatsoundsSearchResults";
 import useWasm from "/hooks/useWasm";
+import { decodeComponent, encodeComponent } from "/utils";
 
 type HistoryState = {
   input?: string;
 };
 
 function setQuery(input: string) {
-  const query = input.replace(/ /g, "+");
+  const query = encodeComponent(input);
   // need to include the ?
   const url = `${window.location.origin}${window.location.pathname}?${query}`;
   const state: HistoryState = { input };
@@ -19,7 +20,7 @@ function setQuery(input: string) {
 function decodeQuery(): string {
   // includes the ?
   const query = window.location.search || "";
-  return query.slice(1).replace(/\+/g, " ");
+  return decodeComponent(query.slice(1));
 }
 
 export default function Chatsounds() {
