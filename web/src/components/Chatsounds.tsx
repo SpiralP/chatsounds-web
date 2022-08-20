@@ -34,7 +34,11 @@ export default function Chatsounds() {
     if (input) {
       setInput(input);
       setSearch(input);
-      play(input);
+
+      // laggy if during page load
+      setTimeout(() => {
+        play(input);
+      }, 500);
     }
 
     window.addEventListener("popstate", (event) => {
