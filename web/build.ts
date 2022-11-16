@@ -34,8 +34,9 @@ const AutoBuildWasmPlugin: webpack.WebpackPluginInstance = {
       execa("yarn", ["build:wasm", isProduction ? "--release" : "--dev"], {
         stderr: "inherit",
         stdout: "inherit",
-      }).catch(() => {
+      }).catch((e) => {
         // everything already screams
+        console.warn(e);
       });
 
     compiler.hooks.run.tapPromise("build wasm", async (_compiler) => {

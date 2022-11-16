@@ -28,7 +28,9 @@ const CHATSOUNDS_CLI = path.join(
 
 const OUTPUT_WAV = "./output.wav";
 
-ffmpeg.setFfmpegPath(ffmpegPath);
+if (ffmpegPath) {
+  ffmpeg.setFfmpegPath(ffmpegPath);
+}
 
 const execFileAsync = promisify(execFile);
 
