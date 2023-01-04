@@ -31,7 +31,7 @@ const AutoBuildWasmPlugin: webpack.WebpackPluginInstance = {
     };
 
     const build = () =>
-      execa("yarn", ["build:wasm", isProduction ? "--release" : "--dev"], {
+      execa("npm", ["run", "build:wasm", isProduction ? "--release" : "--dev"], {
         stderr: "inherit",
         stdout: "inherit",
       }).catch((e) => {

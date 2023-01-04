@@ -12,11 +12,10 @@ RUN curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
 
 COPY --chown=node:node . .
 
-RUN npm run build:wasm
-
-RUN yarn install
-
-RUN yarn run build
+RUN set -ex \
+    && npm run build:wasm \
+    && npm install \
+    && npm run build
 
 
 FROM node:lts
@@ -35,12 +34,13 @@ COPY --chown=node:node . .
 
 COPY --from=builder --chown=node:node /home/node/app/pkg ./pkg
 
-RUN yarn workspaces focus --production \
-    && yarn cache clean
+RUN set -ex \
+    && npm install --omit dev \
+    && npm cache clean --force
 
 COPY --from=builder --chown=node:node /home/node/app/dist ./dist
 
 
 EXPOSE 8080
 ENV PORT=8080
-CMD [ "yarn", "start" ]
+CMD [ "npm", "start" ]

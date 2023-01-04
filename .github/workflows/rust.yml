@@ -43,18 +43,11 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-node_modules
 
-      - name: Cache yarn
-        id: cache-yarn
-        uses: actions/cache@v3
-        with:
-          path: .yarn/cache
-          key: ${{ runner.os }}-yarn
-
-      - name: Install yarn packages
-        run: yarn install
+      - name: Install npm packages
+        run: npm install
 
       - name: Build wasm and frontend
-        run: yarn run build
+        run: npm run build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
