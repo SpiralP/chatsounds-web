@@ -1,6 +1,9 @@
 FROM node:lts AS builder
 
-RUN apt-get -y update && apt-get -y install curl build-essential
+RUN set -ex \
+    && apt-get -y update \
+    && apt-get -y install curl build-essential \
+    libasound2-dev
 
 USER node
 RUN mkdir /home/node/app
@@ -9,6 +12,8 @@ WORKDIR /home/node/app
 RUN curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly --target wasm32-unknown-unknown
 ENV PATH="/home/node/.cargo/bin:$PATH"
 RUN curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
+
+RUN cargo install --git https://github.com/SpiralP/chatsounds-cli.git
 
 COPY --chown=node:node . .
 
@@ -21,14 +26,13 @@ RUN set -ex \
 FROM node:lts
 
 RUN apt-get -y update \
-    && apt-get -y install libasound2-dev
+    && apt-get -y install libasound2
 
 USER node
 RUN mkdir /home/node/app
 WORKDIR /home/node/app
 
-RUN wget -O chatsounds-cli https://github.com/SpiralP/chatsounds-cli/releases/latest/download/chatsounds-cli-linux-x86_64 \
-    && chmod +x chatsounds-cli
+COPY --from=builder /home/node/.cargo/bin/chatsounds-cli .
 
 COPY --chown=node:node . .
 
