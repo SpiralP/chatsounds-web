@@ -27,3 +27,8 @@ strip = true # Automatically strip symbols from the binary.
 opt-level = "z" # Optimize for size.
 lto = true # Link Time Optimization
 codegen-units = 1 # Parallel Code Generation Units
+
+[package.metadata.wasm-pack.profile.release]
+# wasm-opt doesn't support arm64
+# and it only saved us 30 KB
+wasm-opt = false
