@@ -2,8 +2,9 @@ FROM node:lts AS builder
 
 RUN set -ex \
     && apt-get -y update \
-    && apt-get -y install curl build-essential \
-    libasound2-dev
+    && apt-get -y install curl build-essential libasound2-dev \
+    && apt-get -y clean \
+    && rm -rf /var/lib/apt/lists/*
 
 USER node
 RUN mkdir /home/node/app
@@ -25,8 +26,11 @@ RUN set -ex \
 
 FROM node:lts
 
-RUN apt-get -y update \
-    && apt-get -y install libasound2
+RUN set -ex \
+    && apt-get -y update \
+    && apt-get -y install libasound2 \
+    && apt-get -y clean \
+    && rm -rf /var/lib/apt/lists/*
 
 USER node
 RUN mkdir /home/node/app
@@ -47,4 +51,5 @@ COPY --from=builder --chown=node:node /home/node/app/dist ./dist
 
 EXPOSE 8080
 ENV PORT=8080
+ENV NODE_ENV=production
 CMD [ "npm", "start" ]
