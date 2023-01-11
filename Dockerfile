@@ -12,6 +12,7 @@ WORKDIR /home/node/app
 
 RUN curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly --target wasm32-unknown-unknown
 ENV PATH="/home/node/.cargo/bin:$PATH"
+ENV CARGO_UNSTABLE_SPARSE_REGISTRY="true"
 RUN curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
 
 RUN cargo install --git https://github.com/SpiralP/chatsounds-cli.git
