@@ -1,6 +1,6 @@
 import { FocusStyleManager } from "@blueprintjs/core";
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import App from "/components/App";
 import "/styles/index.css";
 
@@ -10,7 +10,7 @@ function main() {
   const root = document.createElement("div");
   document.body.appendChild(root);
 
-  ReactDOM.createRoot(root).render(<App />);
+  ReactDOM.render(<App />, root);
 }
 
 main();
