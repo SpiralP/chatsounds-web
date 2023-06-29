@@ -2,7 +2,6 @@ import AsyncLock from "async-lock";
 import { execFile } from "child_process";
 import concat from "concat-stream";
 import express, { Response } from "express";
-import ffmpegPath from "ffmpeg-static";
 import ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
 import memoizee from "memoizee";
@@ -21,16 +20,12 @@ const VIDEO_USER_AGENT =
 const DIR_NAME = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_DIR = path.resolve(DIR_NAME, "..");
 
-const CHATSOUNDS_CLI = path.join(
-  PROJECT_DIR,
-  process.platform === "win32" ? "chatsounds-cli.exe" : "chatsounds-cli"
-);
+const CHATSOUNDS_CLI =
+  process.platform === "win32" ? "chatsounds-cli.exe" : "chatsounds-cli";
 
 const OUTPUT_WAV = "./output.wav";
 
-if (ffmpegPath) {
-  ffmpeg.setFfmpegPath(ffmpegPath);
-}
+ffmpeg.setFfmpegPath("ffmpeg");
 
 const execFileAsync = promisify(execFile);
 
@@ -50,7 +45,7 @@ const app = express();
 
 const lock = new AsyncLock();
 
-const EXTENSIONS = ["mp4", "webm", "ogg", "mp3"] as const;
+const EXTENSIONS = ["mp4", "webm", "ogg", "mp3", "wav"] as const;
 type Extension = (typeof EXTENSIONS)[number];
 const DEFAULT_EXT: Extension = "mp4";
 
@@ -71,7 +66,11 @@ const getChatsoundBuffer = memoizee(
         console.warn(cmd.stderr);
 
         if (await exists(OUTPUT_WAV)) {
-          const buffer = await new Promise<Buffer>((resolve, reject) => {
+          if (ext === "wav") {
+            return await fs.promises.readFile(OUTPUT_WAV);
+          }
+
+          return await new Promise<Buffer>((resolve, reject) => {
             let f = ffmpeg(OUTPUT_WAV).inputOptions([
               "-hide_banner",
               "-loglevel",
@@ -95,8 +94,6 @@ const getChatsoundBuffer = memoizee(
               .on("stderr", console.warn)
               .pipe(concat(resolve));
           });
-
-          return buffer;
         }
 
         return null;

@@ -1,0 +1,82 @@
+{
+  "nodes": {
+    "chatsounds-cli-repo": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "nixpkgs-mozilla": "nixpkgs-mozilla"
+      },
+      "locked": {
+        "lastModified": 1688023207,
+        "narHash": "sha256-wOIeFMa3upcxU9ng5meuDtkYHp3ShG7/fq5g76nX6eo=",
+        "owner": "SpiralP",
+        "repo": "chatsounds-cli",
+        "rev": "89bfc11c80dd6ba584c0adb0b9e9f952c29c1cff",
+        "type": "github"
+      },
+      "original": {
+        "owner": "SpiralP",
+        "repo": "chatsounds-cli",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1687829761,
+        "narHash": "sha256-QRe1Y8SS3M4GeC58F/6ajz6V0ZLUVWX3ZAMgov2N3/g=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "9790f3242da2152d5aa1976e3e4b8b414f4dd206",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-23.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-mozilla": {
+      "locked": {
+        "lastModified": 1687771476,
+        "narHash": "sha256-TSpqz6qYVRoqkEdOCawEQ4/cWt/4pracmvw17HK1tgE=",
+        "owner": "mozilla",
+        "repo": "nixpkgs-mozilla",
+        "rev": "3a44b8783514e7d6db4b63df96071b6c2b014b07",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mozilla",
+        "ref": "master",
+        "repo": "nixpkgs-mozilla",
+        "type": "github"
+      }
+    },
+    "nixpkgs-mozilla_2": {
+      "locked": {
+        "lastModified": 1687771476,
+        "narHash": "sha256-TSpqz6qYVRoqkEdOCawEQ4/cWt/4pracmvw17HK1tgE=",
+        "owner": "mozilla",
+        "repo": "nixpkgs-mozilla",
+        "rev": "3a44b8783514e7d6db4b63df96071b6c2b014b07",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mozilla",
+        "ref": "master",
+        "repo": "nixpkgs-mozilla",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "chatsounds-cli-repo": "chatsounds-cli-repo",
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-mozilla": "nixpkgs-mozilla_2"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

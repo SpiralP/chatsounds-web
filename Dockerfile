@@ -29,7 +29,7 @@ FROM node:lts
 
 RUN set -ex \
     && apt-get -y update \
-    && apt-get -y install libasound2 \
+    && apt-get -y install tini ffmpeg libasound2 \
     && apt-get -y clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -37,20 +37,13 @@ USER node
 RUN mkdir /home/node/app
 WORKDIR /home/node/app
 
-COPY --from=builder /home/node/.cargo/bin/chatsounds-cli .
-
-COPY --chown=node:node . .
-
-COPY --from=builder --chown=node:node /home/node/app/pkg ./pkg
-
-RUN set -ex \
-    && npm install --omit dev \
-    && npm cache clean --force
-
+COPY --from=builder /home/node/.cargo/bin/chatsounds-cli /usr/bin/
 COPY --from=builder --chown=node:node /home/node/app/dist ./dist
+COPY --from=builder --chown=node:node /home/node/app/dist-node ./dist-node
+COPY --chown=node:node ./package.json ./package.json
 
 
 EXPOSE 8080
 ENV PORT=8080
 ENV NODE_ENV=production
-CMD [ "npm", "start" ]
+CMD [ "tini", "--", "node", "./dist-node/discord-embed-proxy.js" ]

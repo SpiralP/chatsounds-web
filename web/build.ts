@@ -31,10 +31,14 @@ const AutoBuildWasmPlugin: webpack.WebpackPluginInstance = {
     };
 
     const build = () =>
-      execa("npm", ["run", "build:wasm", isProduction ? "--release" : "--dev"], {
-        stderr: "inherit",
-        stdout: "inherit",
-      }).catch((e) => {
+      execa(
+        "npm",
+        ["run", "build:wasm", isProduction ? "--release" : "--dev"],
+        {
+          stderr: "inherit",
+          stdout: "inherit",
+        }
+      ).catch((e) => {
         // everything already screams
         console.warn(e);
       });
@@ -98,8 +102,7 @@ const config: webpack.Configuration = {
     ],
   },
   plugins: [
-    AutoBuildWasmPlugin,
-    ...(isDev ? [new ReactRefreshWebpackPlugin()] : []),
+    ...(isDev ? [AutoBuildWasmPlugin, new ReactRefreshWebpackPlugin()] : []),
     new HtmlWebpackPlugin({
       template: path.join(DIR_NAME, "src", "index.html"),
     }),
