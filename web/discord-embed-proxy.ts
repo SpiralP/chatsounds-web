@@ -51,7 +51,7 @@ const app = express();
 const lock = new AsyncLock();
 
 const EXTENSIONS = ["mp4", "webm", "ogg", "mp3"] as const;
-type Extension = typeof EXTENSIONS[number];
+type Extension = (typeof EXTENSIONS)[number];
 const DEFAULT_EXT: Extension = "mp4";
 
 const getChatsoundBuffer = memoizee(
@@ -135,15 +135,14 @@ app.get("/", async (req, res, next) => {
       await respondMedia(sentenceMatch, extMatch, res);
       return;
     }
-  }
-
-  if (
-    input &&
-    (userAgent.includes(DISCORD_USER_AGENT) ||
-      userAgent.includes(VIDEO_USER_AGENT))
-  ) {
-    await respondMedia(input, DEFAULT_EXT, res);
-    return;
+    console.log({ userAgent });
+    if (
+      userAgent.includes(DISCORD_USER_AGENT) ||
+      userAgent.includes(VIDEO_USER_AGENT)
+    ) {
+      await respondMedia(input, DEFAULT_EXT, res);
+      return;
+    }
   }
 
   next();
