@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 8080;
 const DISCORD_USER_AGENT =
   "Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)";
 const VIDEO_USER_AGENT =
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 11.6; rv:92.0) Gecko/20100101 Firefox/92.0";
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:38.0) Gecko/20100101 Firefox/38.0";
 
 const DIR_NAME = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_DIR = path.resolve(DIR_NAME, "..");
@@ -47,7 +47,6 @@ const lock = new AsyncLock();
 
 const EXTENSIONS = ["mp4", "webm", "ogg", "mp3", "wav"] as const;
 type Extension = (typeof EXTENSIONS)[number];
-const DEFAULT_EXT: Extension = "mp4";
 
 const getChatsoundBuffer = memoizee(
   async (sentence: string, ext: Extension): Promise<Buffer | null> =>
@@ -137,12 +136,37 @@ app.get("/", async (req, res, next) => {
       userAgent.includes(DISCORD_USER_AGENT) ||
       userAgent.includes(VIDEO_USER_AGENT)
     ) {
-      await respondMedia(input, DEFAULT_EXT, res);
+      const url = `/media.mp4${search || ""}`;
+      res.type("html");
+      res.send(`<!DOCTYPE html><html lang="en"><head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+
+<meta property="og:video:type" content="video/mp4" />
+<meta property="og:video" content="${url}" />
+<meta property="og:video:secure_url" content="${url}" />
+<meta property="og:video:width" content="120" />
+<meta property="og:video:height" content="120" />
+
+<meta property="twitter:card" content="player" />
+<meta property="twitter:player:stream:content_type" content="video/mp4" />
+<meta property="twitter:player:stream" content="${url}" />
+<meta property="twitter:player:width" content="120" />
+<meta property="twitter:player:height" content="120" />
+
+</head><body></body></html>
+`);
       return;
     }
   }
 
   next();
+});
+
+app.get("/media.mp4", async (req, res) => {
+  const { search } = url.parse(req.url);
+  const input = decodeComponent(search?.slice(1) || "");
+
+  await respondMedia(input, "mp4", res);
 });
 
 app.use(express.static(path.join(PROJECT_DIR, "dist")));
