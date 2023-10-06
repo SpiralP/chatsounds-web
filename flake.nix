@@ -21,8 +21,8 @@
           chatsounds-cli = chatsounds-cli-repo.outputs.packages.${system}.default;
 
           rust = (pkgs.rustChannelOf {
-            channel = "1.70.0";
-            sha256 = "sha256-gdYqng0y9iHYzYPAdkC/ka3DRny3La/S5G8ASj0Ayyc=";
+            channel = "1.73.0";
+            sha256 = "sha256-rLP8+fTxnPHoR96ZJiCa/5Ans1OojI7MLsmSqR2ip8o=";
           }).rust.override {
             extensions = if dev then [ "rust-src" ] else [ ];
             targets = [ "wasm32-unknown-unknown" ];
@@ -98,7 +98,7 @@
             name = "chatsounds-web";
             inherit src;
 
-            npmDepsHash = "sha256-+c52kZCHGnOia4jH0sydj9NoYSt4bPj87AFMtEWqKZ8=";
+            npmDepsHash = "sha256-VpZ7LoD5Z+CPjDZWK9yD2+i1b6+AecFvOJWilZm73S8=";
 
             preBuild = ''
               ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web

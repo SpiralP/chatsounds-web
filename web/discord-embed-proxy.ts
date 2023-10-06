@@ -124,6 +124,7 @@ app.get("/", async (req, res, next) => {
   const input = decodeComponent(search?.slice(1) || "");
   const userAgent = req.headers["user-agent"] || "";
 
+  console.log({ url: req.url, input, userAgent });
   if (input) {
     const match = /^(.+)\.(.+?)$/.exec(input) || [];
     const sentenceMatch = match[1] || "";
@@ -132,7 +133,6 @@ app.get("/", async (req, res, next) => {
       await respondMedia(sentenceMatch, extMatch, res);
       return;
     }
-    console.log({ userAgent });
     if (
       userAgent.includes(DISCORD_USER_AGENT) ||
       userAgent.includes(VIDEO_USER_AGENT)
