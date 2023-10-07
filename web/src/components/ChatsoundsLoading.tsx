@@ -89,7 +89,7 @@ export default function ChatsoundsLoading() {
             });
             return null;
           });
-        })
+        }),
       );
       console.log("loading took", Date.now() - beforeLoading);
 

@@ -26,7 +26,7 @@ export default function ChatsoundsSearchResults({
         const results = await search(input);
         setResults(results);
       }, 200),
-    [search]
+    [search],
   );
 
   React.useEffect(() => {
@@ -47,16 +47,16 @@ export default function ChatsoundsSearchResults({
     () =>
       results.slice(
         tabSelection || 0,
-        (tabSelection || 0) + MAX_VISIBLE_RESULTS
+        (tabSelection || 0) + MAX_VISIBLE_RESULTS,
       ),
-    [results, tabSelection]
+    [results, tabSelection],
   );
 
   const resultClicked = React.useCallback(
     (result: string) => {
       onSetInput(result, true);
     },
-    [onSetInput]
+    [onSetInput],
   );
 
   return (

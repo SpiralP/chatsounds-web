@@ -21,7 +21,7 @@ export default function WasmLoaded() {
       (e: Error) => {
         // TODO
         console.error(e);
-      }
+      },
     );
   }, [wasm]);
 

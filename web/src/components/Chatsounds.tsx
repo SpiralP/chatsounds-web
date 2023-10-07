@@ -63,7 +63,7 @@ export default function Chatsounds() {
       setSearch(value);
       setTabSelection(null);
     },
-    []
+    [],
   );
 
   const inputKeyDown = React.useCallback(
@@ -84,7 +84,7 @@ export default function Chatsounds() {
         });
       }
     },
-    [input, play]
+    [input, play],
   );
 
   const onSearchSetInput = React.useCallback(
@@ -95,7 +95,7 @@ export default function Chatsounds() {
         setQuery(input);
       }
     },
-    [play]
+    [play],
   );
 
   return (

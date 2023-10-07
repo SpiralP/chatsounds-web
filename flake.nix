@@ -55,50 +55,49 @@
           };
         in
         rec {
-          wasm = pkgs.stdenv.mkDerivation
-            {
-              pname = "chatsounds-web-wasm";
-              version = "0.0.1";
-              inherit src;
+          wasm = pkgs.stdenv.mkDerivation {
+            pname = "chatsounds-web-wasm";
+            version = "0.0.1";
+            inherit src;
 
-              buildPhase = ''
-                wasm-bindgen --version
-                HOME=$TMPDIR RUST_LOG=info wasm-pack -vvvv build --target web --mode no-install
-              '';
+            buildPhase = ''
+              wasm-bindgen --version
+              HOME=$TMPDIR RUST_LOG=info wasm-pack -vvvv build --target web --mode no-install
+            '';
 
-              installPhase = ''
-                mkdir -p $out
-                cp -av pkg $out/
-              '';
+            installPhase = ''
+              mkdir -p $out
+              cp -av pkg $out/
+            '';
 
-              cargoDeps = rustPlatform.importCargoLock {
-                lockFile = ./Cargo.lock;
-                outputHashes = {
-                  "chatsounds-0.2.0" = "sha256-CWUVl2aCjYGU8UUIeq8jFy/x+0/sQwBlKxF1mmUuCkQ=";
-                };
+            cargoDeps = rustPlatform.importCargoLock {
+              lockFile = ./Cargo.lock;
+              outputHashes = {
+                "chatsounds-0.2.0" = "sha256-HJq5MXkXnEKGOHX+DRzVhQjLTPmar0MWW7aItqrlpys=";
               };
-
-              nativeBuildInputs = with pkgs; [
-                wasm-pack
-                # wasm-pack requires wasm-bindgen-cli's version to match the one in your Cargo.lock
-                wasm-bindgen-cli
-                pkg-config
-                rust
-                rustPlatform.bindgenHook
-                rustPlatform.cargoSetupHook
-              ];
-
-              buildInputs = with pkgs; [
-                openssl
-                alsa-lib
-              ];
             };
+
+            nativeBuildInputs = with pkgs; [
+              wasm-pack
+              # wasm-pack requires wasm-bindgen-cli's version to match the one in your Cargo.lock
+              wasm-bindgen-cli
+              pkg-config
+              rust
+              rustPlatform.bindgenHook
+              rustPlatform.cargoSetupHook
+            ];
+
+            buildInputs = with pkgs; [
+              openssl
+              alsa-lib
+            ];
+          };
 
           default = pkgs.buildNpmPackage {
             name = "chatsounds-web";
             inherit src;
 
-            npmDepsHash = "sha256-pWFw9ExkrZmcLxK4rgz+aU/x3Az8w3fAUq937kxBz9U=";
+            npmDepsHash = "sha256-BZUPcZPnacG2QVXoa8aWqnPxLQVKHWDNstjuGPN+EXw=";
 
             preBuild = ''
               ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web

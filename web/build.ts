@@ -1,16 +1,13 @@
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import { execa } from "execa";
-import glob from "glob";
+import { glob } from "glob";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
 import ReactRefreshTypeScript from "react-refresh-typescript";
 import TsconfigPathsWebpackPlugin from "tsconfig-paths-webpack-plugin";
 import { fileURLToPath } from "url";
-import { promisify } from "util";
 import webpack from "webpack";
 import WebpackDevServer from "webpack-dev-server";
-
-const globAsync = promisify(glob);
 
 const isProduction = process.env.NODE_ENV === "production";
 const isDev = process.argv[2] === "dev";
@@ -21,7 +18,7 @@ const PROJECT_ROOT = path.resolve(DIR_NAME, "..");
 const AutoBuildWasmPlugin: webpack.WebpackPluginInstance = {
   apply: (compiler) => {
     const watchedFiles = async () => {
-      const files = await globAsync("**", {
+      const files = await glob("**", {
         cwd: path.join(PROJECT_ROOT, "src"),
         absolute: true,
       });
@@ -37,7 +34,7 @@ const AutoBuildWasmPlugin: webpack.WebpackPluginInstance = {
         {
           stderr: "inherit",
           stdout: "inherit",
-        }
+        },
       ).catch((e) => {
         // everything already screams
         console.warn(e);
@@ -51,7 +48,7 @@ const AutoBuildWasmPlugin: webpack.WebpackPluginInstance = {
       const srcFiles = await watchedFiles();
       if (
         !compiler.modifiedFiles ||
-        srcFiles.find((path) => compiler.modifiedFiles.has(path))
+        srcFiles.find((path) => compiler.modifiedFiles?.has(path) || false)
       ) {
         await build();
       }
@@ -62,7 +59,7 @@ const AutoBuildWasmPlugin: webpack.WebpackPluginInstance = {
       async (compilation) => {
         const srcFiles = await watchedFiles();
         compilation.fileDependencies.addAll(srcFiles);
-      }
+      },
     );
   },
 };

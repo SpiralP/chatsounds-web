@@ -20,8 +20,8 @@ RUN cargo install --git https://github.com/SpiralP/chatsounds-cli.git
 COPY --chown=node:node . .
 
 RUN set -ex \
-    && npm run build:wasm \
     && npm install \
+    && npm run build:wasm \
     && npm run build
 
 

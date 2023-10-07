@@ -76,7 +76,7 @@ export function useWasmStateInfo(): WasmStateInfo {
           state: WasmState.Error,
           error: "Wasm error!",
         });
-      }
+      },
     );
   }, []);
 
