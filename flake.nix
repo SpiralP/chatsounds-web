@@ -114,6 +114,9 @@
                 chatsounds-cli
                 ffmpeg
               ]) else [ ];
+
+            buildInputs = with pkgs; if dev then
+              wasm.buildInputs else [ ];
           };
         }
       );
