@@ -98,7 +98,7 @@
             name = "chatsounds-web";
             inherit src;
 
-            npmDepsHash = "sha256-VpZ7LoD5Z+CPjDZWK9yD2+i1b6+AecFvOJWilZm73S8=";
+            npmDepsHash = "sha256-pWFw9ExkrZmcLxK4rgz+aU/x3Az8w3fAUq937kxBz9U=";
 
             preBuild = ''
               ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
