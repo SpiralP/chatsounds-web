@@ -37,9 +37,6 @@ jobs:
           path: target
           key: ${{ runner.os }}-target
 
-      - name: Build wasm
-        run: npm run build:wasm
-
       - name: Cache node_modules
         id: cache-node_modules
         uses: actions/cache@v3
@@ -49,6 +46,9 @@ jobs:
 
       - name: Install npm packages
         run: npm install
+
+      - name: Build wasm
+        run: npm run build:wasm
 
       - name: Build wasm and frontend
         run: npm run build
