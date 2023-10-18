@@ -3,8 +3,9 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
     nixpkgs-mozilla.url = "github:mozilla/nixpkgs-mozilla/master";
     chatsounds-cli-repo = {
-      url = "github:SpiralP/chatsounds-cli";
+      url = "github:SpiralP/chatsounds-cli/master";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-mozilla.follows = "nixpkgs-mozilla";
     };
   };
 

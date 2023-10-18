@@ -5,18 +5,21 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "nixpkgs-mozilla": "nixpkgs-mozilla"
+        "nixpkgs-mozilla": [
+          "nixpkgs-mozilla"
+        ]
       },
       "locked": {
-        "lastModified": 1697662201,
-        "narHash": "sha256-bkscFDvZESHYoRghTiO6kaHT+bthRHVVZc/qZYU3k4U=",
+        "lastModified": 1697663563,
+        "narHash": "sha256-z5N3qOGY967kQ07foDgoxCOVHre+arpbelDwMaSQC0w=",
         "owner": "SpiralP",
         "repo": "chatsounds-cli",
-        "rev": "0da727e350befb4279cb2295f691e46362cf0c82",
+        "rev": "5af3817561e82297be8edbc6ed1e8f647cfee5cc",
         "type": "github"
       },
       "original": {
         "owner": "SpiralP",
+        "ref": "master",
         "repo": "chatsounds-cli",
         "type": "github"
       }
@@ -39,22 +42,6 @@
     },
     "nixpkgs-mozilla": {
       "locked": {
-        "lastModified": 1687771476,
-        "narHash": "sha256-TSpqz6qYVRoqkEdOCawEQ4/cWt/4pracmvw17HK1tgE=",
-        "owner": "mozilla",
-        "repo": "nixpkgs-mozilla",
-        "rev": "3a44b8783514e7d6db4b63df96071b6c2b014b07",
-        "type": "github"
-      },
-      "original": {
-        "owner": "mozilla",
-        "ref": "master",
-        "repo": "nixpkgs-mozilla",
-        "type": "github"
-      }
-    },
-    "nixpkgs-mozilla_2": {
-      "locked": {
         "lastModified": 1695805681,
         "narHash": "sha256-1ElPLD8eFfnuIk0G52HGGpRtQZ4QPCjChRlEOfkZ5ro=",
         "owner": "mozilla",
@@ -73,7 +60,7 @@
       "inputs": {
         "chatsounds-cli-repo": "chatsounds-cli-repo",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-mozilla": "nixpkgs-mozilla_2"
+        "nixpkgs-mozilla": "nixpkgs-mozilla"
       }
     }
   },
