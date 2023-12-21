@@ -22,8 +22,8 @@
           chatsounds-cli = chatsounds-cli-repo.outputs.packages.${system}.default;
 
           rust = (pkgs.rustChannelOf {
-            channel = "1.73.0";
-            sha256 = "sha256-rLP8+fTxnPHoR96ZJiCa/5Ans1OojI7MLsmSqR2ip8o=";
+            channel = "1.74.0";
+            sha256 = "sha256-U2yfueFohJHjif7anmJB5vZbpP7G6bICH4ZsjtufRoU=";
           }).rust.override {
             extensions = if dev then [ "rust-src" ] else [ ];
             targets = [ "wasm32-unknown-unknown" ];
@@ -117,6 +117,46 @@
 
             buildInputs = with pkgs; if dev then
               wasm.buildInputs else [ ];
+          };
+
+
+          docker = pkgs.dockerTools.streamLayeredImage {
+            name = "chatsounds-web";
+            tag = "latest";
+
+            fakeRootCommands = ''
+              mkdir tmp \
+                && chmod -v 1777 tmp
+            '';
+            contents = with pkgs; with pkgs.dockerTools; [
+              default
+
+              binSh
+              caCertificates
+              coreutils
+              usrBinEnv
+              (fakeNss.override {
+                extraPasswdLines = [ "user:x:1000:1000:user:/tmp:/bin/sh" ];
+                extraGroupLines = [ "user:x:1000:1000" ];
+              })
+            ];
+
+            config = {
+              Entrypoint = [
+                "${pkgs.tini}/bin/tini"
+                "--"
+              ];
+              Cmd = [
+                "discord-embed-proxy"
+              ];
+              Env = [
+                "NODE_ENV=production"
+              ];
+
+              ExposedPorts = { "8080/tcp" = { }; };
+              User = "1000:1000";
+              WorkingDir = "/tmp";
+            };
           };
         }
       );
