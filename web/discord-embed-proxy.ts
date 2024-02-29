@@ -10,6 +10,7 @@ import url, { fileURLToPath } from "url";
 import { promisify } from "util";
 import { decodeComponent } from "./src/utils.js";
 
+const HOST = process.env.HOST || "0.0.0.0";
 const PORT = process.env.PORT || 8080;
 
 const DISCORD_USER_AGENT =
@@ -178,6 +179,6 @@ app.get("/media.mp4", async (req, res) => {
 
 app.use(express.static(DIST_DIR));
 
-app.listen(PORT, () => {
+app.listen(PORT, HOST, () => {
   console.log(`app listening on port ${PORT}`);
 });
