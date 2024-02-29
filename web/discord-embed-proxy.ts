@@ -11,7 +11,7 @@ import { promisify } from "util";
 import { decodeComponent } from "./src/utils.js";
 
 const HOST = process.env.HOST || "0.0.0.0";
-const PORT = process.env.PORT || 8080;
+const PORT = parseInt(process.env.PORT || "8080", 10);
 
 const DISCORD_USER_AGENT =
   "Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)";
