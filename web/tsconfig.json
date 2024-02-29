@@ -106,8 +106,7 @@
     "src/**/*",
     "discord-embed-proxy.ts",
     "build.ts",
-    "build-node.ts",
-    "index.ts"
+    "build-node.ts"
   ],
   "exclude": [".eslintrc.cjs"]
 }

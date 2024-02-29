@@ -17,8 +17,15 @@ const DISCORD_USER_AGENT =
 const VIDEO_USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:38.0) Gecko/20100101 Firefox/38.0";
 
+// ./dist-node/(discord-embed-proxy.ts)
 const DIR_NAME = path.dirname(fileURLToPath(import.meta.url));
+// ./
 const PROJECT_DIR = path.resolve(DIR_NAME, "..");
+// ./dist
+const DIST_DIR = path.join(PROJECT_DIR, "dist");
+if (!fs.existsSync(DIST_DIR)) {
+  throw new Error("!dist");
+}
 
 const CHATSOUNDS_CLI =
   process.platform === "win32" ? "chatsounds-cli.exe" : "chatsounds-cli";
@@ -105,7 +112,7 @@ const getChatsoundBuffer = memoizee(
     // cache for 1 minute
     maxAge: 1000 * 60,
     promise: true,
-  },
+  }
 );
 
 async function respondMedia(sentence: string, ext: Extension, res: Response) {
@@ -169,7 +176,7 @@ app.get("/media.mp4", async (req, res) => {
   await respondMedia(input, "mp4", res);
 });
 
-app.use(express.static(path.join(PROJECT_DIR, "dist")));
+app.use(express.static(DIST_DIR));
 
 app.listen(PORT, () => {
   console.log(`app listening on port ${PORT}`);
