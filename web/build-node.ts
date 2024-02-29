@@ -17,7 +17,6 @@ const PROJECT_ROOT = path.resolve(DIR_NAME, "..");
     outdir: path.join(PROJECT_ROOT, "dist-node"),
     define: {
       "process.env.NODE_ENV": JSON.stringify(NODE_ENV),
-      "process.env": JSON.stringify({ NODE_ENV }),
     },
     platform: "node",
     external: ["./lib-cov/fluent-ffmpeg"],
