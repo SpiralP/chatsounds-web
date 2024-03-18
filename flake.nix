@@ -23,16 +23,12 @@
             pname = "chatsounds-web-wasm";
             version = "0.0.1";
 
-            src = lib.cleanSourceWith rec {
+            src = lib.cleanSourceWith {
               src = ./.;
               filter = path: type:
                 lib.cleanSourceFilter path type
                 && (
-                  let
-                    baseName = builtins.baseNameOf (builtins.toString path);
-                    relPath = lib.removePrefix (builtins.toString ./.) (builtins.toString path);
-                  in
-                  lib.any (re: builtins.match re relPath != null) [
+                  lib.any (re: builtins.match re (lib.removePrefix (builtins.toString ./.) (builtins.toString path)) != null) [
                     "/Cargo.lock"
                     "/Cargo.toml"
                     "/src"
@@ -81,16 +77,13 @@
           default = pkgs.buildNpmPackage {
             name = "chatsounds-web";
 
-            src = lib.cleanSourceWith rec {
+            src = lib.cleanSourceWith {
               src = ./.;
               filter = path: type:
                 lib.cleanSourceFilter path type
-                && (
-                  let
-                    baseName = builtins.baseNameOf (builtins.toString path);
-                    relPath = lib.removePrefix (builtins.toString ./.) (builtins.toString path);
-                  in
-                  lib.any (re: builtins.match re relPath != null) [
+                && (lib.any
+                  (re: builtins.match re (lib.removePrefix (builtins.toString ./.) (builtins.toString path)) != null)
+                  [
                     "/package-lock.json"
                     "/package.json"
                     "/web"
@@ -110,17 +103,22 @@
                 --prefix PATH : ${lib.makeBinPath [ chatsounds-cli ffmpeg ]}
             '';
 
-            nativeBuildInputs = with pkgs; if dev then
-              (wasm.nativeBuildInputs ++ [
-                chatsounds-cli
-                ffmpeg
-                clippy
-                rustfmt
-                rust-analyzer
-              ]) else [ ];
+            nativeBuildInputs = with pkgs;
+              if dev
+              then
+                (wasm.nativeBuildInputs ++ [
+                  chatsounds-cli
+                  ffmpeg
+                  clippy
+                  rustfmt
+                  rust-analyzer
+                ])
+              else [ ];
 
-            buildInputs = with pkgs; if dev then
-              wasm.buildInputs else [ ];
+            buildInputs =
+              if dev
+              then wasm.buildInputs
+              else [ ];
 
             meta.mainProgram = "chatsounds-web";
           };

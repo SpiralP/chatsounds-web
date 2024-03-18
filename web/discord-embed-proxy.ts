@@ -131,9 +131,9 @@ app.get("/", async (req, res, next) => {
   const input = decodeComponent(search?.slice(1) || "");
   const userAgent = req.headers["user-agent"] || "";
 
-  console.log({ url: req.url, input, userAgent });
+  console.log("/", { url: req.url, input, userAgent });
   if (input) {
-    const match = /^(.+)\.(.+?)$/.exec(input) || [];
+    const match = input.match(/^(.+)\.(.+?)$/) || [];
     const sentenceMatch = match[1] || "";
     const extMatch = match[2] as Extension | undefined;
     if (sentenceMatch && extMatch && EXTENSIONS.includes(extMatch)) {
@@ -144,7 +144,7 @@ app.get("/", async (req, res, next) => {
       userAgent.includes(DISCORD_USER_AGENT) ||
       userAgent.includes(VIDEO_USER_AGENT)
     ) {
-      const url = `/media.mp4${search || ""}`;
+      const url = `/media/${search?.slice(1) || ""}.mp4`;
       res.type("html");
       res.send(`<!DOCTYPE html><html lang="en"><head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
@@ -170,11 +170,18 @@ app.get("/", async (req, res, next) => {
   next();
 });
 
-app.get("/media.mp4", async (req, res) => {
-  const { search } = url.parse(req.url);
-  const input = decodeComponent(search?.slice(1) || "");
+app.get("/media/:search.mp4", async (req, res, next) => {
+  const { search } = req.params;
+  const input = decodeComponent(search || "");
 
-  await respondMedia(input, "mp4", res);
+  console.log("/media/", { url: req.url, input });
+
+  if (input) {
+    await respondMedia(input, "mp4", res);
+    return;
+  }
+
+  next();
 });
 
 app.use(express.static(DIST_DIR));
