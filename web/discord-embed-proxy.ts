@@ -113,7 +113,7 @@ const getChatsoundBuffer = memoizee(
     // cache for 1 minute
     maxAge: 1000 * 60,
     promise: true,
-  }
+  },
 );
 
 async function respondMedia(sentence: string, ext: Extension, res: Response) {

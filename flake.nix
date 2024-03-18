@@ -84,18 +84,22 @@
                 && (lib.any
                   (re: builtins.match re (lib.removePrefix (builtins.toString ./.) (builtins.toString path)) != null)
                   [
-                    "/package-lock.json"
-                    "/package.json"
+                    "/\.gitignore"
+                    "/package-lock\.json"
+                    "/package\.json"
                     "/web"
                     "/web/.*"
                   ]
                 );
             };
 
-            npmDepsHash = "sha256-SdwNPEpN+Vjwc1mX7szWlGFlgYMUkZBSPy8ib6lGNZg=";
+            npmDepsHash = "sha256-z74gZiobNikYY97WVKzNHxSTQUkI+Ciw3OZ4DWhSHZU=";
 
             preBuild = ''
               ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
+
+              npm run typecheck
+              npm run lint
             '';
 
             postInstall = with pkgs; ''
