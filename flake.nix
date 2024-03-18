@@ -85,6 +85,8 @@
                   (re: builtins.match re (lib.removePrefix (builtins.toString ./.) (builtins.toString path)) != null)
                   [
                     "/\.gitignore"
+                    # need npmignore or else dist isn't copied
+                    "/\.npmignore"
                     "/package-lock\.json"
                     "/package\.json"
                     "/web"
