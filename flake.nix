@@ -50,7 +50,7 @@
             cargoDeps = pkgs.rustPlatform.importCargoLock {
               lockFile = ./Cargo.lock;
               outputHashes = {
-                "chatsounds-0.2.0" = "sha256-HJq5MXkXnEKGOHX+DRzVhQjLTPmar0MWW7aItqrlpys=";
+                "chatsounds-0.2.0" = "sha256-7m8wXOKfmSuZoDtSd1yHovI3LafEtDKZr4LL1ls+nZ8=";
               };
             };
 
@@ -95,7 +95,7 @@
                 );
             };
 
-            npmDepsHash = "sha256-z74gZiobNikYY97WVKzNHxSTQUkI+Ciw3OZ4DWhSHZU=";
+            npmDepsHash = "sha256-sqHzJid5xi1lfXn6sxj4ZVVwO2uO+gQ3H42d4vQFb5U=";
 
             preBuild = ''
               ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
