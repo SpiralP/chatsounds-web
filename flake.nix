@@ -95,7 +95,7 @@
                 );
             };
 
-            npmDepsHash = "sha256-sqHzJid5xi1lfXn6sxj4ZVVwO2uO+gQ3H42d4vQFb5U=";
+            npmDepsHash = "sha256-RqLscZzeMZElpF9930xMCYsH38P76QecS6YTeocmor4=";
 
             preBuild = ''
               ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
