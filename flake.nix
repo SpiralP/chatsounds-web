@@ -56,8 +56,12 @@
 
             nativeBuildInputs = with pkgs; [
               wasm-pack
-              # wasm-pack requires wasm-bindgen-cli's version to match the one in your Cargo.lock
-              wasm-bindgen-cli
+              (
+                # wasm-pack requires wasm-bindgen-cli's version to match the one in your Cargo.lock
+                lib.trivial.throwIf (wasm-bindgen-cli.version != "0.2.89")
+                  "wasm-bindgen-cli updated, bump version here and in Cargo.toml to ${wasm-bindgen-cli.version}"
+                  wasm-bindgen-cli
+              )
               pkg-config
               rustc-wasm32
               rustc-wasm32.llvmPackages.lld
