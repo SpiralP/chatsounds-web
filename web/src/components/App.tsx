@@ -1,11 +1,11 @@
-import { Position, Toaster, ToasterInstance } from "@blueprintjs/core";
+import { OverlayToaster, Position, Toaster } from "@blueprintjs/core";
 import React from "react";
 import WasmLoading from "/components/WasmLoading";
 import { ToasterContext } from "/hooks/useToaster";
 
 export default function App() {
-  const toasterRef = React.useRef<Toaster>(null);
-  const [toaster, setToaster] = React.useState<ToasterInstance | null>(null);
+  const toasterRef = React.useRef<OverlayToaster>(null);
+  const [toaster, setToaster] = React.useState<Toaster | null>(null);
 
   React.useEffect(() => {
     setToaster(toasterRef.current);
@@ -18,7 +18,7 @@ export default function App() {
           <WasmLoading />
         </ToasterContext.Provider>
       ) : null}
-      <Toaster ref={toasterRef} position={Position.BOTTOM_RIGHT} />
+      <OverlayToaster ref={toasterRef} position={Position.BOTTOM_RIGHT} />
     </>
   );
 }
