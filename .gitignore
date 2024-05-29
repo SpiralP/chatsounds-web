@@ -1,5 +1,6 @@
 /bin/
-/pkg/
+/pkg/*
+!/pkg/package.json
 /target
 /wasm-pack.log
 /result

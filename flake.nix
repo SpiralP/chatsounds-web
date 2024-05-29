@@ -83,7 +83,7 @@
               "^web(/.*)?$"
             ];
 
-            npmDepsHash = "sha256-RqLscZzeMZElpF9930xMCYsH38P76QecS6YTeocmor4=";
+            npmDepsHash = "sha256-wWt8iKjK5Dy1Vu4eQHpYVaNqccfHkKTM3KI9Ckdw270=";
 
             preBuild = ''
               ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
@@ -102,10 +102,10 @@
               then
                 (wasm.nativeBuildInputs ++ [
                   chatsounds-cli
-                  ffmpeg
                   clippy
-                  rustfmt
+                  ffmpeg
                   rust-analyzer
+                  rustfmt
                 ])
               else [ ];
 

@@ -1,0 +1,14 @@
+{
+  "name": "chatsounds-web",
+  "version": "0.1.0",
+  "files": [
+    "chatsounds_web_bg.wasm",
+    "chatsounds_web.js",
+    "chatsounds_web.d.ts"
+  ],
+  "module": "chatsounds_web.js",
+  "types": "chatsounds_web.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
