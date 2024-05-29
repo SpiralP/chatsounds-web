@@ -40,7 +40,6 @@
     "@blueprintjs/core": "^5.10.3",
     "@blueprintjs/eslint-plugin": "^6.1.2",
     "@blueprintjs/icons": "^5.9.0",
-    "@blueprintjs/popover2": "^2.1.5",
     "@blueprintjs/select": "^5.1.5",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.13",
     "@types/can-autoplay": "^3.0.5",
