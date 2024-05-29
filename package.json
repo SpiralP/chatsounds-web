@@ -9,10 +9,11 @@
   "scripts": {
     "start": "cd web && node --loader ts-node/esm discord-embed-proxy.ts",
     "dev": "npm run build:js dev",
-    "build": "cd web && concurrently --raw \"cross-env NODE_ENV=production npm run build:js\" \"cross-env NODE_ENV=production npm run build:node\"",
+    "build": "cd web && npm run check && concurrently --raw \"cross-env NODE_ENV=production npm run build:js\" \"cross-env NODE_ENV=production npm run build:node\"",
     "build:js": "rimraf dist && cd web && node --loader ts-node/esm build.ts",
     "build:node": "rimraf dist-node && cd web && node --loader ts-node/esm build-node.ts",
     "build:wasm": "cross-env RUST_LOG=info wasm-pack -vvvv build --target web",
+    "check": "cd web && concurrently --raw \"npm run typecheck\" \"npm run lint\"",
     "typecheck": "cd web && tsc --noEmit",
     "format": "cd web && prettier --write --ignore-path ../.gitignore .",
     "lint": "cd web && concurrently --raw \"prettier --check --ignore-path ../.gitignore .\" \"eslint --ignore-path ../.gitignore .\""

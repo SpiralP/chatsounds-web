@@ -1,4 +1,4 @@
-import { MenuItem2 } from "@blueprintjs/popover2";
+import { MenuItem } from "@blueprintjs/core";
 import React from "react";
 
 export default function ChatsoundsResult({
@@ -12,5 +12,5 @@ export default function ChatsoundsResult({
     onClick(result);
   }, [onClick, result]);
 
-  return <MenuItem2 onClick={handleClick} text={result} />;
+  return <MenuItem onClick={handleClick} text={result} />;
 }

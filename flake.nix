@@ -87,9 +87,6 @@
 
             preBuild = ''
               ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
-
-              npm run typecheck
-              npm run lint
             '';
 
             postInstall = with pkgs; ''
