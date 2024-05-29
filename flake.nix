@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     chatsounds-cli-repo = {
       url = "github:SpiralP/chatsounds-cli";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -23,19 +23,12 @@
             pname = "chatsounds-web-wasm";
             version = "0.0.1";
 
-            src = lib.cleanSourceWith {
-              src = ./.;
-              filter = path: type:
-                lib.cleanSourceFilter path type
-                && (
-                  lib.any (re: builtins.match re (lib.removePrefix (builtins.toString ./.) (builtins.toString path)) != null) [
-                    "/Cargo.lock"
-                    "/Cargo.toml"
-                    "/src"
-                    "/src/.*"
-                  ]
-                );
-            };
+            src = lib.sourceByRegex ./. [
+              "^\.cargo(/.*)?$"
+              "^build\.rs$"
+              "^Cargo\.(lock|toml)$"
+              "^src(/.*)?$"
+            ];
 
             buildPhase = ''
               wasm-bindgen --version
@@ -58,7 +51,7 @@
               wasm-pack
               (
                 # wasm-pack requires wasm-bindgen-cli's version to match the one in your Cargo.lock
-                lib.trivial.throwIf (wasm-bindgen-cli.version != "0.2.89")
+                lib.trivial.throwIf (wasm-bindgen-cli.version != "0.2.92")
                   "wasm-bindgen-cli updated, bump version here and in Cargo.toml to ${wasm-bindgen-cli.version}"
                   wasm-bindgen-cli
               )
@@ -81,23 +74,14 @@
           default = pkgs.buildNpmPackage {
             name = "chatsounds-web";
 
-            src = lib.cleanSourceWith {
-              src = ./.;
-              filter = path: type:
-                lib.cleanSourceFilter path type
-                && (lib.any
-                  (re: builtins.match re (lib.removePrefix (builtins.toString ./.) (builtins.toString path)) != null)
-                  [
-                    "/\.gitignore"
-                    # need npmignore or else dist isn't copied
-                    "/\.npmignore"
-                    "/package-lock\.json"
-                    "/package\.json"
-                    "/web"
-                    "/web/.*"
-                  ]
-                );
-            };
+            src = lib.sourceByRegex ./. [
+              "^\.gitignore$"
+              # need npmignore or else dist isn't copied
+              "^\.npmignore$"
+              "^package-lock\.json$"
+              "^package\.json$"
+              "^web(/.*)?$"
+            ];
 
             npmDepsHash = "sha256-RqLscZzeMZElpF9930xMCYsH38P76QecS6YTeocmor4=";
 
