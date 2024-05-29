@@ -4,6 +4,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # locally generated
+      - dependency-name: chatsounds-web
     groups:
       npm-dependencies:
         patterns:
