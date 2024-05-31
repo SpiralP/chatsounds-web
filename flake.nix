@@ -19,58 +19,6 @@
           chatsounds-cli = chatsounds-cli-repo.outputs.packages.${system}.default;
         in
         rec {
-          wasm = pkgs.stdenv.mkDerivation {
-            pname = "chatsounds-web-wasm";
-            version = "0.0.1";
-
-            src = lib.sourceByRegex ./. [
-              "^\.cargo(/.*)?$"
-              "^build\.rs$"
-              "^Cargo\.(lock|toml)$"
-              "^src(/.*)?$"
-            ];
-
-            buildPhase = ''
-              wasm-bindgen --version
-              HOME=$TMPDIR RUST_LOG=info wasm-pack -vvvv build --target web --mode no-install
-            '';
-
-            installPhase = ''
-              mkdir -p $out
-              cp -av pkg $out/
-            '';
-
-            cargoDeps = pkgs.rustPlatform.importCargoLock {
-              lockFile = ./Cargo.lock;
-              outputHashes = {
-                "chatsounds-0.2.0" = "sha256-PnggDT0oWtRRowrGoD8Bi8+Fpss6SKzQ1PDk3n1tCBM=";
-              };
-            };
-
-            nativeBuildInputs = with pkgs; [
-              wasm-pack
-              (
-                # wasm-pack requires wasm-bindgen-cli's version to match the one in your Cargo.lock
-                lib.trivial.throwIf (wasm-bindgen-cli.version != "0.2.92")
-                  "wasm-bindgen-cli updated, bump version here and in Cargo.toml to ${wasm-bindgen-cli.version}"
-                  wasm-bindgen-cli
-              )
-              pkg-config
-              rustc-wasm32
-              rustc-wasm32.llvmPackages.lld
-              cargo
-              rustPlatform.bindgenHook
-              rustPlatform.cargoSetupHook
-            ];
-            # fix "linker `rust-lld` not found"
-            CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
-
-            buildInputs = with pkgs; [
-              openssl
-              alsa-lib
-            ];
-          };
-
           default = pkgs.buildNpmPackage {
             name = "chatsounds-web";
 
@@ -112,6 +60,59 @@
               else [ ];
 
             meta.mainProgram = "chatsounds-web";
+          };
+
+          wasm = pkgs.stdenv.mkDerivation {
+            pname = "chatsounds-web-wasm";
+            version = "0.0.1";
+
+            src = lib.sourceByRegex ./. [
+              "^\.cargo(/.*)?$"
+              "^build\.rs$"
+              "^Cargo\.(lock|toml)$"
+              "^src(/.*)?$"
+            ];
+
+            buildPhase = ''
+              wasm-bindgen --version
+              HOME=$TMPDIR RUST_LOG=info wasm-pack -vvvv build --target web --mode no-install
+            '';
+
+            installPhase = ''
+              mkdir -p $out
+              cp -av pkg $out/
+            '';
+
+            cargoDeps = pkgs.rustPlatform.importCargoLock {
+              lockFile = ./Cargo.lock;
+              outputHashes = {
+                "chatsounds-0.2.0" = "sha256-PnggDT0oWtRRowrGoD8Bi8+Fpss6SKzQ1PDk3n1tCBM=";
+              };
+            };
+
+            # fix "linker `rust-lld` not found"
+            CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
+
+            buildInputs = with pkgs; [
+              openssl
+              alsa-lib
+            ];
+
+            nativeBuildInputs = with pkgs; [
+              wasm-pack
+              (
+                # wasm-pack requires wasm-bindgen-cli's version to match the one in your Cargo.lock
+                lib.trivial.throwIf (wasm-bindgen-cli.version != "0.2.92")
+                  "wasm-bindgen-cli updated, bump version here and in Cargo.toml to ${wasm-bindgen-cli.version}"
+                  wasm-bindgen-cli
+              )
+              pkg-config
+              rustc-wasm32
+              rustc-wasm32.llvmPackages.lld
+              cargo
+              rustPlatform.bindgenHook
+              rustPlatform.cargoSetupHook
+            ];
           };
 
           docker = pkgs.dockerTools.streamLayeredImage {
