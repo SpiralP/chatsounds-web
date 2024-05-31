@@ -1,9 +1,9 @@
 import { InputGroup } from "@blueprintjs/core";
 import React from "react";
 import { useMount } from "react-use";
-import ChatsoundsSearchResults from "/components/ChatsoundsSearchResults";
-import useWasm from "/hooks/useWasm";
-import { decodeComponent, encodeComponent } from "/utils";
+import ChatsoundsSearchResults from "/src/components/ChatsoundsSearchResults";
+import useWasm from "/src/hooks/useWasm";
+import { decodeComponent, encodeComponent } from "/src/utils";
 
 type HistoryState = {
   input?: string;

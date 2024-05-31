@@ -4,8 +4,8 @@ import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import "normalize.css/normalize.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import App from "/components/App";
-import "/styles/index.css";
+import App from "/src/components/App";
+import "/src/styles/index.css";
 
 function main() {
   FocusStyleManager.onlyShowFocusOnTabs();

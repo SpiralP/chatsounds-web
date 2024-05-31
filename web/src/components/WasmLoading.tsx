@@ -1,7 +1,7 @@
 import { Callout, Intent, Spinner, SpinnerSize } from "@blueprintjs/core";
 import React from "react";
-import WasmLoaded from "/components/WasmLoaded";
-import { useWasmStateInfo, WasmContext, WasmState } from "/hooks/useWasm";
+import WasmLoaded from "/src/components/WasmLoaded";
+import { WasmContext, WasmState, useWasmStateInfo } from "/src/hooks/useWasm";
 
 export default function WasmLoading() {
   const wasmStateInfo = useWasmStateInfo();
