@@ -2,8 +2,8 @@ import { Button, Spinner, SpinnerSize } from "@blueprintjs/core";
 import canAutoplay from "can-autoplay";
 import React from "react";
 import { useMount } from "react-use";
-import ChatsoundsLoading from "/components/ChatsoundsLoading";
-import useWasm from "/hooks/useWasm";
+import ChatsoundsLoading from "/src/components/ChatsoundsLoading";
+import useWasm from "/src/hooks/useWasm";
 
 export default function WasmLoaded() {
   const wasm = useWasm();

@@ -2,8 +2,8 @@ import { Menu } from "@blueprintjs/core";
 import debounce from "lodash.debounce";
 import React from "react";
 import { usePrevious } from "react-use";
-import ChatsoundsResult from "/components/ChatsoundsResult";
-import useWasm from "/hooks/useWasm";
+import ChatsoundsResult from "/src/components/ChatsoundsResult";
+import useWasm from "/src/hooks/useWasm";
 
 const MAX_VISIBLE_RESULTS = 50;
 

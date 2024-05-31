@@ -1,8 +1,8 @@
 import { Intent, Spinner, SpinnerSize } from "@blueprintjs/core";
 import React from "react";
-import Chatsounds from "/components/Chatsounds";
-import useToaster from "/hooks/useToaster";
-import useWasm from "/hooks/useWasm";
+import Chatsounds from "/src/components/Chatsounds";
+import useToaster from "/src/hooks/useToaster";
+import useWasm from "/src/hooks/useWasm";
 
 function nonNullable<T>(value: T): value is NonNullable<T> {
   return value !== null && value !== undefined;

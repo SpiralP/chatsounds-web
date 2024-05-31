@@ -11,23 +11,8 @@ concurrency:
 permissions:
   contents: write
 
-env:
-  GIT_AUTHOR_NAME: github-actions[bot]
-  GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
-  GIT_COMMITTER_NAME: github-actions[bot]
-  GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
-
 jobs:
   update_nix_hashes:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-      - uses: DeterminateSystems/nix-installer-action@main
-      - uses: DeterminateSystems/magic-nix-cache-action@main
-      - run: nix run --no-write-lock-file --print-build-logs ./.github#update-nix-hashes -- default package-lock.json
-      - run: git diff && git add -v .
-      - run: nix build --print-build-logs .
-      - run: "git commit -m 'nix: update hashes' || true"
-      - run: git push origin
+    uses: SpiralP/github-reusable-workflows/.github/workflows/update-nix-hashes.yml@main
+    with:
+      npm-attribute: default

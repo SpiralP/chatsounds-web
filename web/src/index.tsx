@@ -1,16 +1,19 @@
 import { FocusStyleManager } from "@blueprintjs/core";
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "normalize.css/normalize.css";
 import React from "react";
-import ReactDOM from "react-dom";
-import App from "/components/App";
-import "/styles/index.css";
+import { createRoot } from "react-dom/client";
+import App from "/src/components/App";
+import "/src/styles/index.css";
 
 function main() {
   FocusStyleManager.onlyShowFocusOnTabs();
 
-  const root = document.createElement("div");
-  document.body.appendChild(root);
-
-  ReactDOM.render(<App />, root);
+  const root = document.getElementById("root");
+  if (!root) {
+    throw new Error("!root");
+  }
+  createRoot(root).render(<App />);
 }
 
 main();

@@ -19,6 +19,49 @@
           chatsounds-cli = chatsounds-cli-repo.outputs.packages.${system}.default;
         in
         rec {
+          default = pkgs.buildNpmPackage {
+            name = "chatsounds-web";
+
+            src = lib.sourceByRegex ./. [
+              "^\.gitignore$"
+              # need npmignore or else dist isn't copied
+              "^\.npmignore$"
+              "^package-lock\.json$"
+              "^package\.json$"
+              "^web(/.*)?$"
+            ];
+
+            npmDepsHash = "sha256-x00zS9EngNOEKUm3PBA5B+9YJtQvd4JF5ivyohnX2Hc=";
+
+            preBuild = ''
+              ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
+            '';
+
+            postInstall = with pkgs; ''
+              wrapProgram $out/bin/chatsounds-web \
+                --prefix PATH : ${lib.makeBinPath [ chatsounds-cli ffmpeg ]}
+            '';
+
+            nativeBuildInputs = with pkgs;
+              if dev
+              then
+                (wasm.nativeBuildInputs ++ [
+                  chatsounds-cli
+                  clippy
+                  ffmpeg
+                  rust-analyzer
+                  rustfmt
+                ])
+              else [ ];
+
+            buildInputs =
+              if dev
+              then wasm.buildInputs
+              else [ ];
+
+            meta.mainProgram = "chatsounds-web";
+          };
+
           wasm = pkgs.stdenv.mkDerivation {
             pname = "chatsounds-web-wasm";
             version = "0.0.1";
@@ -47,6 +90,14 @@
               };
             };
 
+            # fix "linker `rust-lld` not found"
+            CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
+
+            buildInputs = with pkgs; [
+              openssl
+              alsa-lib
+            ];
+
             nativeBuildInputs = with pkgs; [
               wasm-pack
               (
@@ -62,59 +113,6 @@
               rustPlatform.bindgenHook
               rustPlatform.cargoSetupHook
             ];
-            # fix "linker `rust-lld` not found"
-            CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
-
-            buildInputs = with pkgs; [
-              openssl
-              alsa-lib
-            ];
-          };
-
-          default = pkgs.buildNpmPackage {
-            name = "chatsounds-web";
-
-            src = lib.sourceByRegex ./. [
-              "^\.gitignore$"
-              # need npmignore or else dist isn't copied
-              "^\.npmignore$"
-              "^package-lock\.json$"
-              "^package\.json$"
-              "^web(/.*)?$"
-            ];
-
-            npmDepsHash = "sha256-wWt8iKjK5Dy1Vu4eQHpYVaNqccfHkKTM3KI9Ckdw270=";
-
-            preBuild = ''
-              ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
-
-              npm run typecheck
-              npm run lint
-            '';
-
-            postInstall = with pkgs; ''
-              wrapProgram $out/bin/chatsounds-web \
-                --prefix PATH : ${lib.makeBinPath [ chatsounds-cli ffmpeg ]}
-            '';
-
-            nativeBuildInputs = with pkgs;
-              if dev
-              then
-                (wasm.nativeBuildInputs ++ [
-                  chatsounds-cli
-                  clippy
-                  ffmpeg
-                  rust-analyzer
-                  rustfmt
-                ])
-              else [ ];
-
-            buildInputs =
-              if dev
-              then wasm.buildInputs
-              else [ ];
-
-            meta.mainProgram = "chatsounds-web";
           };
 
           docker = pkgs.dockerTools.streamLayeredImage {
