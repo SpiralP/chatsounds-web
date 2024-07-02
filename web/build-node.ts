@@ -11,6 +11,7 @@ const PROJECT_ROOT = path.resolve(DIR_NAME, "..");
   await build({
     entryPoints: ["discord-embed-proxy.ts"],
     bundle: true,
+    packages: "bundle",
     minify: NODE_ENV === "production",
     sourcemap: false,
     target: ["node18"],
