@@ -37,7 +37,7 @@
               ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
             '';
 
-            postInstall = with pkgs; ''
+            postFixup = with pkgs; ''
               wrapProgram $out/bin/chatsounds-web \
                 --prefix PATH : ${lib.makeBinPath [ chatsounds-cli ffmpeg ]}
             '';
