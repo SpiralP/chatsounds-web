@@ -31,7 +31,7 @@
               "^web(/.*)?$"
             ];
 
-            npmDepsHash = "sha256-41Yn/zWou/M7jRILZYTJ0sVSO9liLI9+MCjJtwairTY=";
+            npmDepsHash = "sha256-XlW1cUXWfCvL+oaK6ePuD8jHIAEsPeL6yIgpS2aSvXQ=";
 
             preBuild = ''
               ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
