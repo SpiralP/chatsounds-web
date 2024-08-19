@@ -25,7 +25,7 @@ serde = { version = "1", features = ["derive"] }
 serde-wasm-bindgen = "0.6"
 # nix's wasm-pack requires wasm-bindgen's version to match this one;
 # the docker version will download the correct version on demand.
-# nix run github:NixOS/nixpkgs/nixos-23.05#wasm-bindgen-cli -- --version
+# nix run github:NixOS/nixpkgs/nixos-24.05#wasm-bindgen-cli -- --version
 wasm-bindgen = "=0.2.92"
 wasm-bindgen-futures = "0.4"
 web-sys = { version = "0.3", features = ["console"] }
