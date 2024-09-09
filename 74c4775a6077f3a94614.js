@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[860],{751:(n,e,t)=>{t.r(e),t.d(e,{IconSvgPaths16:()=>a,IconSvgPaths20:()=>r,getIconPaths:()=>o,iconNameToPathsRecordKey:()=>u});var c=t(369),a=t(630),r=t(345),s=t(458);function o(n,e){var t=(0,c.fL)(n);return e===s.l.STANDARD?a[t]:r[t]}function u(n){return(0,c.fL)(n)}}}]);
+//# sourceMappingURL=74c4775a6077f3a94614.js.map
