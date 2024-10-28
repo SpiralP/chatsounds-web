@@ -86,7 +86,7 @@
             cargoDeps = pkgs.rustPlatform.importCargoLock {
               lockFile = ./Cargo.lock;
               outputHashes = {
-                "chatsounds-0.2.0" = "sha256-eAo0AOiW/26yA3H9awjpJ5EPslY+9z8WJ5JFcFtNMTI=";
+                "chatsounds-0.2.0" = "sha256-l9Fk/qRdhxhFneXoLEszG5QTWwS+LwFCu6essLzbT5c=";
               };
             };
 
