@@ -37,9 +37,9 @@
     "typescript": "^5.6.3"
   },
   "devDependencies": {
-    "@blueprintjs/core": "^5.13.1",
+    "@blueprintjs/core": "^5.14.0",
     "@blueprintjs/eslint-plugin": "^6.1.4",
-    "@blueprintjs/select": "^5.2.5",
+    "@blueprintjs/select": "^5.3.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
     "@types/can-autoplay": "^3.0.5",
     "@types/eslint": "^8.56.12",
@@ -53,7 +53,7 @@
     "@typescript-eslint/parser": "^7.18.0",
     "can-autoplay": "^3.0.2",
     "chatsounds-web": "./pkg",
-    "concurrently": "^9.0.1",
+    "concurrently": "^9.1.0",
     "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",
     "esbuild": "^0.24.0",
