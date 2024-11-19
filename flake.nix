@@ -7,7 +7,7 @@
     };
   };
 
-  outputs = { nixpkgs, chatsounds-cli-repo, ... }:
+  outputs = { self, nixpkgs, chatsounds-cli-repo }:
     let
       inherit (nixpkgs) lib;
 
@@ -20,7 +20,8 @@
         in
         rec {
           default = pkgs.buildNpmPackage {
-            name = "chatsounds-web";
+            pname = "chatsounds-web";
+            version = "${self.shortRev or self.dirtyShortRev}";
 
             src = lib.sourceByRegex ./. [
               "^\.gitignore$"
