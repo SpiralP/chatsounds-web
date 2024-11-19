@@ -51,7 +51,7 @@
                   clippy
                   ffmpeg
                   rust-analyzer
-                  rustfmt
+                  (rustfmt.override { asNightly = true; })
                 ])
               else [ ];
 
