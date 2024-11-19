@@ -32,7 +32,7 @@
               "^web(/.*)?$"
             ];
 
-            npmDepsHash = "sha256-nVIO7MWkMa7Fr1E+UrdpdAnL0edzFO7/Z1cl3/QxaMY=";
+            npmDepsHash = "sha256-tpNESodZdoaYGppz8CyWw4UO9YPtn7pqOj1djTyBQoE=";
 
             preBuild = ''
               ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
@@ -87,7 +87,7 @@
             cargoDeps = pkgs.rustPlatform.importCargoLock {
               lockFile = ./Cargo.lock;
               outputHashes = {
-                "chatsounds-0.2.0" = "sha256-AVHKWvj9DnfdRcFRmCu0Jt+eRwqyDCq9nHssSkeJ9/M=";
+                "chatsounds-0.2.0" = "sha256-7KAA90FfCI+DGuQ6jg0FhwjdYGXY6v4UWqFC6026pDc=";
               };
             };
 
