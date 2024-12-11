@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1733259764,
-        "narHash": "sha256-JigLsRBfCO976P8LSSBuva0XyHlmdl1hr9n1+uA8IfQ=",
+        "lastModified": 1733872626,
+        "narHash": "sha256-T4Rr92LDfKO+yjiXxlOC++NxKX1lvma13uWfYMZTO/g=",
         "owner": "SpiralP",
         "repo": "chatsounds-cli",
-        "rev": "056ef47c8b303e0a340b55cae6efe7a42abb46d3",
+        "rev": "ed2263368c3171e67e38e9ada0849d88b9e7ffbc",
         "type": "github"
       },
       "original": {
@@ -22,16 +22,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1733016324,
-        "narHash": "sha256-8qwPSE2g1othR1u4uP86NXxm6i7E9nHPyJX3m3lx7Q4=",
+        "lastModified": 1733808091,
+        "narHash": "sha256-KWwINTQelKOoQgrXftxoqxmKFZb9pLVfnRvK270nkVk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "7e1ca67996afd8233d9033edd26e442836cc2ad6",
+        "rev": "a0f3e10d94359665dba45b71b4227b0aeb851f8e",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-24.05",
+        "ref": "nixos-24.11",
         "repo": "nixpkgs",
         "type": "github"
       }

@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     chatsounds-cli-repo = {
       url = "github:SpiralP/chatsounds-cli";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -87,7 +87,7 @@
             cargoDeps = pkgs.rustPlatform.importCargoLock {
               lockFile = ./Cargo.lock;
               outputHashes = {
-                "chatsounds-0.2.0" = "sha256-MikHa9fKz5tTzo61p90x3CJ4qAKkcHSoC1BEv82ZzHw=";
+                "chatsounds-0.2.0" = "sha256-yD2u8JhjVQW9vGS0crvv3tyscQ7s9zSrkBjVI6AxV2Y=";
               };
             };
 
@@ -103,7 +103,7 @@
               wasm-pack
               (
                 # wasm-pack requires wasm-bindgen-cli's version to match the one in your Cargo.lock
-                lib.trivial.throwIf (wasm-bindgen-cli.version != "0.2.92")
+                lib.trivial.throwIf (wasm-bindgen-cli.version != "0.2.95")
                   "wasm-bindgen-cli updated, bump version here and in Cargo.toml to ${wasm-bindgen-cli.version}"
                   wasm-bindgen-cli
               )
