@@ -103,10 +103,13 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
   "include": [
-    "src/**/*",
-    "discord-embed-proxy.ts",
+    "__tests__/**/*",
+    "build-node.ts",
     "build.ts",
-    "build-node.ts"
+    "discord-embed-proxy.ts",
+    "jest.config.ts",
+    "jest.setup.ts",
+    "src/**/*"
   ],
   "exclude": [".eslintrc.cjs"]
 }

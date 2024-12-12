@@ -17,6 +17,21 @@
             inherit system;
           };
           chatsounds-cli = chatsounds-cli-repo.outputs.packages.${system}.default;
+
+          # use FC_DEBUG=1024 when running to debug what config files are loaded
+          fontconfig = pkgs.runCommand "fontconfig"
+            {
+              nativeBuildInputs = with pkgs; [ sd ];
+            }
+            ''
+              mkdir -vp "$out/conf.d"
+              ln -vs ${pkgs.fontconfig.out}/etc/fonts/conf.d/* "$out/conf.d/"
+
+              cat '${pkgs.fontconfig.out}/etc/fonts/fonts.conf' > "$out/fonts.conf"
+              sd --fixed-strings '${pkgs.dejavu_fonts.minimal}' '${pkgs.noto-fonts}' "$out/fonts.conf"
+              sd --fixed-strings '/etc/fonts/conf.d' "$out/conf.d" "$out/fonts.conf"
+              sd --fixed-strings '/var/cache/fontconfig' "/tmp/fontconfig" "$out/fonts.conf"
+            '';
         in
         rec {
           default = pkgs.buildNpmPackage {
@@ -32,7 +47,28 @@
               "^web(/.*)?$"
             ];
 
-            npmDepsHash = "sha256-e4Dn8PdjNo6dZ+21E6zo+FmrQkdBrVj7oWHbgFyBlbM=";
+            npmDepsHash = "sha256-iYGyxiUGGmcSV17J9zZ2nAx5xmX3n6pZitAagd4U7DQ=";
+
+            nativeBuildInputs = (with pkgs; [
+              # for tests
+              procps
+            ])
+            ++ (if dev then
+              (wasm.nativeBuildInputs ++ (with pkgs; [
+                chatsounds-cli
+                clippy
+                ffmpeg
+                rust-analyzer
+                (rustfmt.override { asNightly = true; })
+              ])) else [ ]);
+
+            buildInputs =
+              if dev
+              then wasm.buildInputs
+              else [ ];
+
+            PUPPETEER_SKIP_DOWNLOAD = true;
+            PUPPETEER_EXECUTABLE_PATH = "${lib.getExe pkgs.chromium}";
 
             preBuild = ''
               ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
@@ -43,26 +79,32 @@
                 --prefix PATH : ${lib.makeBinPath [ chatsounds-cli ffmpeg ]}
             '';
 
-            nativeBuildInputs = with pkgs;
-              if dev
-              then
-                (wasm.nativeBuildInputs ++ [
-                  chatsounds-cli
-                  clippy
-                  ffmpeg
-                  rust-analyzer
-                  (rustfmt.override { asNightly = true; })
-                ])
-              else [ ];
+            FONTCONFIG_FILE = "${fontconfig.out}/fonts.conf";
+            FONTCONFIG_PATH = "${fontconfig.out}/";
+            doCheck = true;
+            # preCheck = ''
+            #   # fix for:
+            #   # Failed to launch the browser process!
+            #   # chrome_crashpad_handler: --database is required
+            #   export HOME="$TMPDIR"
 
-            buildInputs =
-              if dev
-              then wasm.buildInputs
-              else [ ];
+            #   # fix for missing fonts
+            #   mkdir -vp "$HOME/.config/fontconfig"
+            #   ln -vs '${pkgs.fontconfig.out}/etc/fonts/conf.d' "$HOME/.config/fontconfig/conf.d"
+            #   cat '${pkgs.fontconfig.out}/etc/fonts/fonts.conf' \
+            #     | ${lib.getExe pkgs.sd} --fixed-strings '${pkgs.dejavu_fonts.minimal}' '${pkgs.noto-fonts}' \
+            #     > "$HOME/.config/fontconfig/fonts.conf"
+            # '';
+            checkPhase = ''
+              runHook preCheck
+              npm run test
+              runHook postCheck
+            '';
 
             meta.mainProgram = "chatsounds-web";
           };
 
+          # TODO use rust builder?
           wasm = pkgs.stdenv.mkDerivation {
             pname = "chatsounds-web-wasm";
             version = "0.0.1";
