@@ -11,6 +11,9 @@
     let
       inherit (nixpkgs) lib;
 
+      nodeManifest = lib.importJSON ./package.json;
+      rustManifest = lib.importTOML ./Cargo.toml;
+
       makePackage = (system: dev:
         let
           pkgs = import nixpkgs {
@@ -35,8 +38,8 @@
         in
         rec {
           default = pkgs.buildNpmPackage {
-            pname = "chatsounds-web";
-            version = "${self.shortRev or self.dirtyShortRev}";
+            pname = nodeManifest.name;
+            version = "${nodeManifest.version}-${self.shortRev or self.dirtyShortRev}";
 
             src = lib.sourceByRegex ./. [
               "^\.gitignore$"
@@ -47,7 +50,7 @@
               "^web(/.*)?$"
             ];
 
-            npmDepsHash = "sha256-iYGyxiUGGmcSV17J9zZ2nAx5xmX3n6pZitAagd4U7DQ=";
+            npmDepsHash = "sha256-LzmHT2wE2NlXmIxTNjN/Pp9Tw7jqByHmDs3cSRm7J9I=";
 
             nativeBuildInputs = (with pkgs; [
               # for tests
@@ -104,10 +107,9 @@
             meta.mainProgram = "chatsounds-web";
           };
 
-          # TODO use rust builder?
-          wasm = pkgs.stdenv.mkDerivation {
-            pname = "chatsounds-web-wasm";
-            version = "0.0.1";
+          wasm = pkgs.rustPlatform.buildRustPackage {
+            pname = "${rustManifest.package.name}-wasm";
+            version = "${rustManifest.package.version}-${self.shortRev or self.dirtyShortRev}";
 
             src = lib.sourceByRegex ./. [
               "^\.cargo(/.*)?$"
@@ -115,26 +117,6 @@
               "^Cargo\.(lock|toml)$"
               "^src(/.*)?$"
             ];
-
-            buildPhase = ''
-              wasm-bindgen --version
-              HOME=$TMPDIR RUST_LOG=info wasm-pack -vvvv build --target web --mode no-install
-            '';
-
-            installPhase = ''
-              mkdir -p $out
-              cp -av pkg $out/
-            '';
-
-            cargoDeps = pkgs.rustPlatform.importCargoLock {
-              lockFile = ./Cargo.lock;
-              outputHashes = {
-                "chatsounds-0.2.0" = "sha256-yD2u8JhjVQW9vGS0crvv3tyscQ7s9zSrkBjVI6AxV2Y=";
-              };
-            };
-
-            # fix "linker `rust-lld` not found"
-            CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
 
             buildInputs = with pkgs; [
               openssl
@@ -154,8 +136,27 @@
               rustc-wasm32.llvmPackages.lld
               cargo
               rustPlatform.bindgenHook
-              rustPlatform.cargoSetupHook
             ];
+
+            # fix "linker `rust-lld` not found"
+            CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
+
+            buildPhase = ''
+              wasm-bindgen --version
+              HOME=$TMPDIR RUST_LOG=info wasm-pack -vvvv build --target web --mode no-install
+            '';
+
+            installPhase = ''
+              mkdir -p $out
+              cp -av pkg $out/
+            '';
+
+            cargoLock = {
+              lockFile = ./Cargo.lock;
+              outputHashes = {
+                "chatsounds-0.2.0" = "sha256-yD2u8JhjVQW9vGS0crvv3tyscQ7s9zSrkBjVI6AxV2Y=";
+              };
+            };
           };
 
           docker = pkgs.dockerTools.streamLayeredImage {
