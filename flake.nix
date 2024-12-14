@@ -50,7 +50,7 @@
               "^web(/.*)?$"
             ];
 
-            npmDepsHash = "sha256-LzmHT2wE2NlXmIxTNjN/Pp9Tw7jqByHmDs3cSRm7J9I=";
+            npmDepsHash = "sha256-wIop0SHcJAh/aZcjKOZijIIvZ7M6FDLNAGL9qj+Cnqc=";
 
             nativeBuildInputs = (with pkgs; [
               # for tests

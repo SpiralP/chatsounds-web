@@ -1,8 +1,7 @@
 import AsyncLock from "async-lock";
 import { execFile } from "child_process";
-import concat from "concat-stream";
+import { execa } from "execa";
 import express, { Response } from "express";
-import ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
 import memoizee from "memoizee";
 import path from "path";
@@ -32,8 +31,6 @@ const CHATSOUNDS_CLI =
   process.platform === "win32" ? "chatsounds-cli.exe" : "chatsounds-cli";
 
 const OUTPUT_WAV = "./output.wav";
-
-ffmpeg.setFfmpegPath("ffmpeg");
 
 const execFileAsync = promisify(execFile);
 
@@ -77,30 +74,39 @@ const getChatsoundBuffer = memoizee(
             return await fs.promises.readFile(OUTPUT_WAV);
           }
 
-          return await new Promise<Buffer>((resolve, reject) => {
-            let f = ffmpeg(OUTPUT_WAV).inputOptions([
+          const formatOptions = [];
+          if (ext === "mp4" || ext === "webm") {
+            // add a black video for video formats
+            formatOptions.push(
+              "-f",
+              "lavfi",
+              "-i",
+              "color=c=black:s=120x120",
+              "-shortest",
+            );
+          }
+          formatOptions.push("-f", ext);
+          if (ext === "mp4") {
+            formatOptions.push("-movflags", "empty_moov");
+          }
+
+          const { stdout } = await execa(
+            "ffmpeg",
+            [
               "-hide_banner",
               "-loglevel",
               "warning",
-            ]);
+              "-i",
+              OUTPUT_WAV,
+              ...formatOptions,
+              "pipe:1",
+            ],
+            { encoding: "buffer" },
+          );
+          await fs.promises.unlink(OUTPUT_WAV);
+          const buffer = Buffer.from(stdout);
 
-            if (ext === "mp4" || ext === "webm") {
-              // add a black video for video formats
-              f = f
-                .input("color=c=black:s=120x120")
-                .inputFormat("lavfi")
-                .addOutputOptions(["-shortest"]);
-
-              if (ext === "mp4") {
-                f = f.addOutputOptions(["-movflags", "empty_moov"]);
-              }
-            }
-
-            f.outputFormat(ext)
-              .on("error", reject)
-              .on("stderr", console.warn)
-              .pipe(concat(resolve));
-          });
+          return buffer;
         }
 
         return null;
