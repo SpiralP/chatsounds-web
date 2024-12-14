@@ -15,6 +15,9 @@ describe("end-to-end", () => {
       dumpio: true,
     });
     page = await browser.newPage();
+    await page.emulateMediaFeatures([
+      { name: "prefers-color-scheme", value: "dark" },
+    ]);
   });
   afterAll(async () => {
     await page?.close();
@@ -22,12 +25,10 @@ describe("end-to-end", () => {
   });
 
   it("loads page", async () => {
-    await page.emulateMediaFeatures([
-      { name: "prefers-color-scheme", value: "dark" },
-    ]);
-    await page.goto("http://localhost:8080", {
+    const response = await page.goto("http://localhost:8080", {
       waitUntil: "networkidle0",
     });
+    expect(response?.ok()).toBe(true);
 
     expect(Buffer.from(await page.screenshot())).toMatchImageSnapshot();
   });
@@ -41,4 +42,30 @@ describe("end-to-end", () => {
 
     expect(Buffer.from(await page.screenshot())).toMatchImageSnapshot();
   }, 35000);
+
+  it("can give wav file", async () => {
+    const response = await page.goto(
+      "http://localhost:8080/?ah-hello-gordon-freeman-its-good-to-see-you.wav",
+      { waitUntil: "networkidle0" },
+    );
+    console.log(response);
+    expect(response?.ok()).toBe(true);
+
+    const headers = response?.headers();
+    expect(headers).toHaveProperty("content-type", "audio/wav");
+    expect(headers).toHaveProperty("content-length", "612696");
+  });
+
+  it("can give mp4 file", async () => {
+    const response = await page.goto(
+      "http://localhost:8080/?ah-hello-gordon-freeman-its-good-to-see-you.mp4",
+      { waitUntil: "networkidle0" },
+    );
+    console.log(response);
+    expect(response?.ok()).toBe(true);
+
+    const headers = response?.headers();
+    expect(headers).toHaveProperty("content-type", "video/mp4");
+    expect(headers).toHaveProperty("content-length", "61007");
+  });
 });
