@@ -176,9 +176,7 @@
 
             cargoLock = {
               lockFile = ./Cargo.lock;
-              outputHashes = {
-                "chatsounds-0.2.0" = "sha256-b6WGW8lkHjklsRh+CesqgPWO9ndhWK1ZMWY+ztj2PtE=";
-              };
+              allowBuiltinFetchGit = true;
             };
           };
 
