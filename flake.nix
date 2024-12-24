@@ -46,7 +46,7 @@
             '';
         in
         rec {
-          default = pkgs.buildNpmPackage {
+          default = pkgs.buildNpmPackage rec {
             pname = nodeManifest.name;
             version = "${nodeManifest.version}-${self.shortRev or self.dirtyShortRev}";
 
@@ -59,7 +59,13 @@
               "^web(/.*)?$"
             ];
 
-            npmDepsHash = "sha256-wIop0SHcJAh/aZcjKOZijIIvZ7M6FDLNAGL9qj+Cnqc=";
+            npmConfigHook = pkgs.importNpmLock.npmConfigHook;
+            npmDeps = pkgs.importNpmLock {
+              npmRoot = src;
+              packageSourceOverrides = {
+                "node_modules/chatsounds-web" = "${wasm}/pkg";
+              };
+            };
 
             nativeBuildInputs = (with pkgs; [
               # for tests
@@ -81,10 +87,6 @@
 
             PUPPETEER_SKIP_DOWNLOAD = true;
             PUPPETEER_EXECUTABLE_PATH = "${lib.getExe pkgs.chromium}";
-
-            preBuild = ''
-              ln -vsf ${wasm}/pkg ./node_modules/chatsounds-web
-            '';
 
             postFixup = with pkgs; ''
               wrapProgram $out/bin/chatsounds-web \
