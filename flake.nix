@@ -14,6 +14,9 @@
       nodeManifest = lib.importJSON ./package.json;
       rustManifest = lib.importTOML ./Cargo.toml;
 
+      revSuffix = lib.optionalString (self ? shortRev || self ? dirtyShortRev)
+        "-${self.shortRev or self.dirtyShortRev}";
+
       makePackage = (system: dev:
         let
           pkgs = import nixpkgs {
@@ -48,7 +51,7 @@
         rec {
           default = pkgs.buildNpmPackage rec {
             pname = nodeManifest.name;
-            version = "${nodeManifest.version}-${self.shortRev or self.dirtyShortRev}";
+            version = nodeManifest.version + revSuffix;
 
             src = lib.sourceByRegex ./. [
               "^\.gitignore$"
@@ -132,7 +135,7 @@
 
           wasm = pkgs.rustPlatform.buildRustPackage {
             pname = "${rustManifest.package.name}-wasm";
-            version = "${rustManifest.package.version}-${self.shortRev or self.dirtyShortRev}";
+            version = rustManifest.package.version + revSuffix;
 
             src = lib.sourceByRegex ./. [
               "^\.cargo(/.*)?$"
