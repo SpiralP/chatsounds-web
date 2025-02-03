@@ -19,7 +19,7 @@ console_error_panic_hook = "0.1"
 futures = "0.3"
 js-sys = "0.3"
 lazy_static = "1"
-rand = "0.8"
+rand = "0.9"
 reqwest = "0.12"
 serde = { version = "1", features = ["derive"] }
 serde-wasm-bindgen = "0.6"
