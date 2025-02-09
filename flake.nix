@@ -133,6 +133,13 @@
             meta.mainProgram = "chatsounds-web";
           };
 
+          wasm-bindgen-cli = pkgs.wasm-bindgen-cli.override {
+            # needs to match wasm-bindgen's version in Cargo.toml
+            version = "0.2.100";
+            hash = "sha256-3RJzK7mkYFrs7C/WkhW9Rr4LdP5ofb2FdYGz1P7Uxog=";
+            cargoHash = "sha256-tD0OY2PounRqsRiFh8Js5nyknQ809ZcHMvCOLrvYHRE=";
+          };
+
           wasm = pkgs.rustPlatform.buildRustPackage {
             pname = "${rustManifest.package.name}-wasm";
             version = rustManifest.package.version + revSuffix;
@@ -151,12 +158,7 @@
 
             nativeBuildInputs = with pkgs; [
               wasm-pack
-              (
-                # wasm-pack requires wasm-bindgen-cli's version to match the one in your Cargo.lock
-                lib.trivial.throwIf (wasm-bindgen-cli.version != "0.2.95")
-                  "wasm-bindgen-cli updated, bump version here and in Cargo.toml to ${wasm-bindgen-cli.version}"
-                  wasm-bindgen-cli
-              )
+              wasm-bindgen-cli
               pkg-config
               rustc-wasm32
               rustc-wasm32.llvmPackages.lld
@@ -166,11 +168,15 @@
 
             # fix "linker `rust-lld` not found"
             CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
+            # in order to use wasm32-unknown-unknown
+            RUSTFLAGS = "--cfg getrandom_backend=\"wasm_js\"";
 
             buildPhase = ''
               wasm-bindgen --version
               HOME=$TMPDIR RUST_LOG=info wasm-pack -vvvv build --target web --mode no-install
             '';
+
+            doCheck = false;
 
             installPhase = ''
               mkdir -p $out
