@@ -17,16 +17,15 @@ chatsounds = { git = "https://github.com/SpiralP/rust-chatsounds.git", default-f
 ] }
 console_error_panic_hook = "0.1"
 futures = "0.3"
+getrandom = { version = "0.3", features = ["wasm_js"] }
 js-sys = "0.3"
 lazy_static = "1"
-rand = "0.8"
+rand = "0.9"
 reqwest = "0.12"
 serde = { version = "1", features = ["derive"] }
 serde-wasm-bindgen = "0.6"
-# nix's wasm-pack requires wasm-bindgen's version to match this one;
-# the docker version will download the correct version on demand.
-# nix run github:NixOS/nixpkgs/nixos-24.11#wasm-bindgen-cli -- --version
-wasm-bindgen = "=0.2.95"
+# needs to match wasm-bindgen-cli's version in flake.nix
+wasm-bindgen = "=0.2.100"
 wasm-bindgen-futures = "0.4"
 web-sys = { version = "0.3", features = ["console"] }
 

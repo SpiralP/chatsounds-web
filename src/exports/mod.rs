@@ -2,7 +2,7 @@ pub mod types;
 
 use ::chatsounds::{GitHubApiTrees, GitHubMsgpackEntries};
 use futures::FutureExt;
-use rand::thread_rng;
+use rand::rng;
 use wasm_bindgen::prelude::*;
 
 use crate::{chatsounds, exports::types::StringArray, log, Result};
@@ -89,7 +89,7 @@ pub async fn play(input: String) -> Result<()> {
             if input == "sh" {
                 chatsounds.stop_all();
             } else {
-                chatsounds.play(&input, thread_rng()).await?;
+                chatsounds.play(&input, rng()).await?;
             }
 
             Ok(())
