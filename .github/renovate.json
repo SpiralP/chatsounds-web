@@ -2,5 +2,40 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>SpiralP/github-reusable-workflows//.github/renovate.json"
+  ],
+  "packageRules": [
+    {
+      "description": "Ignore major react versions: @blueprintjs/core v5 requires react v18",
+      "matchManagers": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "@types/react",
+        "@types/react-dom",
+        "react",
+        "react-dom"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Ignore major eslint versions: eslint-config-airbnb-typescript (repo archived) requires @typescript-eslint/eslint-plugin v7",
+      "matchManagers": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "@types/eslint",
+        "@typescript-eslint/eslint-plugin",
+        "@typescript-eslint/parser",
+        "eslint",
+        "eslint-plugin-react-hooks"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
+    }
   ]
 }
