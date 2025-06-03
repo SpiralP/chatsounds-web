@@ -133,12 +133,8 @@
             meta.mainProgram = "chatsounds-web";
           };
 
-          wasm-bindgen-cli = pkgs.wasm-bindgen-cli.override {
-            # needs to match wasm-bindgen's version in Cargo.toml
-            version = "0.2.100";
-            hash = "sha256-3RJzK7mkYFrs7C/WkhW9Rr4LdP5ofb2FdYGz1P7Uxog=";
-            cargoHash = "sha256-tD0OY2PounRqsRiFh8Js5nyknQ809ZcHMvCOLrvYHRE=";
-          };
+          # version needs to match wasm-bindgen's version in Cargo.toml
+          wasm-bindgen-cli = pkgs.wasm-bindgen-cli_0_2_100;
 
           wasm = pkgs.rustPlatform.buildRustPackage {
             pname = "${rustManifest.package.name}-wasm";
