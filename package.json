@@ -13,7 +13,7 @@
     "build:dev": "cd web && concurrently --raw \"cross-env NODE_ENV=development npm run build:js\" \"cross-env NODE_ENV=development npm run build:node\"",
     "build:js": "rimraf dist && cd web && node --loader ts-node/esm build.ts",
     "build:node": "rimraf dist-node && cd web && node --loader ts-node/esm build-node.ts",
-    "build:wasm": "cross-env RUST_LOG=info wasm-pack -vvvv build --target web",
+    "build:wasm": "cross-env RUSTFLAGS=\"--cfg getrandom_backend=\\\"wasm_js\\\"\" RUST_LOG=info wasm-pack -vvvv build --target web",
     "check": "cd web && concurrently --raw \"npm run typecheck\" \"npm run lint\"",
     "test": "start-server-and-test start http://localhost:8080 test:js",
     "test:js": "cd web && jest --config jest.config.ts",
