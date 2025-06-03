@@ -125,7 +125,9 @@ const getChatsoundBuffer = memoizee(
 async function respondMedia(sentence: string, ext: Extension, res: Response) {
   const buffer = await getChatsoundBuffer(sentence, ext);
   if (buffer?.length) {
-    res.type(ext).send(buffer);
+    const contentType =
+      (ext === "mp4" || ext === "webm" ? "video/" : "audio/") + ext;
+    res.type(contentType).send(buffer);
   } else {
     console.warn("buffer null or empty");
     res.status(503).send();
@@ -151,8 +153,7 @@ app.get("/", async (req, res, next) => {
       userAgent.includes(VIDEO_USER_AGENT)
     ) {
       const url = `/media/${search?.slice(1) || ""}.mp4`;
-      res.type("html");
-      res.send(`<!DOCTYPE html><html lang="en"><head>
+      res.type("html").send(`<!DOCTYPE html><html lang="en"><head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
 
 <meta property="og:video:type" content="video/mp4" />
