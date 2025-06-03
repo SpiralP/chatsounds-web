@@ -14,4 +14,4 @@ concurrency:
 
 jobs:
   build:
-    uses: SpiralP/github-reusable-workflows/.github/workflows/build.yml@main
+    uses: SpiralP/github-reusable-workflows/.github/workflows/build.yml@577947e1433e0776bf91192dba3f90f37870bc04 # main
