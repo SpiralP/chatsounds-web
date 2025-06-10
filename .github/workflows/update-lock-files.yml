@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: write # to push branch
+  pull-requests: write # to create pr
 
 jobs:
   update_lock_files:

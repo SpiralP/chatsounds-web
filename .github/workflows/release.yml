@@ -5,6 +5,10 @@ on:
     branches: [master, main]
   workflow_dispatch:
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write # for checkout, and to be able to create a release
 
