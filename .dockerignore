@@ -1,8 +1,0 @@
-*
-!/.gitignore
-!/Cargo.lock
-!/Cargo.toml
-!/package-lock.json
-!/package.json
-!/src
-!/web

@@ -184,43 +184,6 @@
               allowBuiltinFetchGit = true;
             };
           };
-
-          docker = pkgs.dockerTools.streamLayeredImage {
-            name = "chatsounds-web";
-            tag = "latest";
-
-            fakeRootCommands = ''
-              mkdir tmp \
-                && chmod -v 1777 tmp
-            '';
-            contents = with pkgs; with pkgs.dockerTools; [
-              default
-
-              binSh
-              caCertificates
-              coreutils
-              usrBinEnv
-              (fakeNss.override {
-                extraPasswdLines = [ "user:x:1000:1000:user:/tmp:/bin/sh" ];
-                extraGroupLines = [ "user:x:1000:1000" ];
-              })
-            ];
-
-            config = {
-              Entrypoint = [
-                "${pkgs.tini}/bin/tini"
-                "--"
-              ];
-              Cmd = [ (lib.getExe default) ];
-              Env = [
-                "NODE_ENV=production"
-              ];
-
-              ExposedPorts = { "8080/tcp" = { }; };
-              User = "1000:1000";
-              WorkingDir = "/tmp";
-            };
-          };
         }
       );
     in
