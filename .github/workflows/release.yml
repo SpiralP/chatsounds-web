@@ -14,4 +14,4 @@ permissions:
 
 jobs:
   release:
-    uses: SpiralP/github-reusable-workflows/.github/workflows/release.yml@911e99ae032ba279ca694e29a94e35ba9a52ecd4 # main
+    uses: SpiralP/github-reusable-workflows/.github/workflows/release.yml@182e2c8df8e27f0eca3ba017990c8877ea227faa # main
