@@ -14,8 +14,8 @@
       nodeManifest = lib.importJSON ./package.json;
       rustManifest = lib.importTOML ./Cargo.toml;
 
-      revSuffix = lib.optionalString (self ? shortRev || self ? dirtyShortRev)
-        "-${self.shortRev or self.dirtyShortRev}";
+      revSuffix = lib.optionalString (self ? dirtyShortRev)
+        "-${self.dirtyShortRev}";
 
       makePackage = (system: dev:
         let

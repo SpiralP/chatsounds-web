@@ -7,7 +7,7 @@ on:
 
 concurrency:
   group: release-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false # do not cancel in-progress jobs
 
 permissions:
   contents: write # for checkout, and to be able to create a release
@@ -15,3 +15,15 @@ permissions:
 jobs:
   release:
     uses: SpiralP/github-reusable-workflows/.github/workflows/release.yml@518bac85e62c59bfceb946e0b5b6bbc0d23e6f80 # main
+    if: "${{ ! startsWith(github.event.head_commit.message, 'chore(release): ') }}"
+    permissions: {} # none, since we use a custom app
+    with:
+      environment-name: release
+      replace-files: |
+        Cargo.lock
+        Cargo.toml
+        package-lock.json
+        package.json
+    secrets:
+      app-id: ${{ secrets.APP_ID }}
+      app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
