@@ -1,11 +1,11 @@
-name: Build
+name: build
 
 on:
   pull_request:
-    branches: [master, main]
+    branches: [main, master]
   push:
-    branches: ["*"]
-    tags: ["*"]
+    branches-ignore: [main, master]
+  workflow_call:
   workflow_dispatch:
 
 concurrency:
