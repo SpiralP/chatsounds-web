@@ -37,7 +37,7 @@
     "@blueprintjs/core": "5.19.1",
     "@blueprintjs/eslint-plugin": "6.1.15",
     "@blueprintjs/select": "5.3.21",
-    "@pmmmwh/react-refresh-webpack-plugin": "0.6.0",
+    "@pmmmwh/react-refresh-webpack-plugin": "0.6.1",
     "@types/can-autoplay": "3.0.5",
     "@types/eslint": "8.56.12",
     "@types/glob": "8.1.0",
