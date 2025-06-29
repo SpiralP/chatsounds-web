@@ -52,7 +52,7 @@
     "@typescript-eslint/parser": "7.18.0",
     "can-autoplay": "3.0.2",
     "chatsounds-web": "./pkg",
-    "concurrently": "9.1.2",
+    "concurrently": "9.2.0",
     "cross-env": "7.0.3",
     "css-loader": "7.1.2",
     "esbuild": "0.25.5",
