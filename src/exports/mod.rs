@@ -77,22 +77,27 @@ pub async fn load_github_msgpack(
 }
 
 #[wasm_bindgen]
-pub async fn play(input: String) -> Result<()> {
+pub async fn play(input: String) -> Result<StringArray> {
     log!("play {:?}", &input);
 
     if input.is_empty() {
-        return Ok(());
+        return Ok(StringArray::empty());
     }
 
     chatsounds::with_mut(|chatsounds| {
         async move {
-            if input == "sh" {
+            let urls = if input == "sh" {
                 chatsounds.stop_all();
+                Vec::new()
             } else {
-                chatsounds.play(&input, rng()).await?;
-            }
+                let (_, played_chatsounds) = chatsounds.play(&input, rng()).await?;
+                played_chatsounds
+                    .into_iter()
+                    .map(|cs| cs.get_web_url().to_string())
+                    .collect::<Vec<_>>()
+            };
 
-            Ok(())
+            Ok(urls.try_into()?)
         }
         .boxed_local()
     })
@@ -104,7 +109,7 @@ pub async fn search(input: String) -> Result<StringArray> {
     log!("search {:?}", &input);
 
     if input.is_empty() {
-        return Ok(vec![].try_into()?);
+        return Ok(StringArray::empty());
     }
 
     chatsounds::with(|chatsounds| {

@@ -23,11 +23,25 @@ extern "C" {
     // pub type SearchResultArray;
 }
 
+impl StringArray {
+    pub fn empty() -> Self {
+        StringArray::try_from(Vec::<String>::new()).unwrap()
+    }
+}
+
 impl TryFrom<Vec<&String>> for StringArray {
     type Error = serde_wasm_bindgen::Error;
 
     fn try_from(slice: Vec<&String>) -> std::result::Result<Self, Self::Error> {
         let js_value: JsValue = serde_wasm_bindgen::to_value(&slice)?;
         Ok(js_value.unchecked_into())
+    }
+}
+
+impl TryFrom<Vec<String>> for StringArray {
+    type Error = serde_wasm_bindgen::Error;
+
+    fn try_from(slice: Vec<String>) -> std::result::Result<Self, Self::Error> {
+        Self::try_from(slice.iter().collect::<Vec<_>>())
     }
 }
