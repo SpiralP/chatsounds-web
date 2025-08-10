@@ -36,9 +36,8 @@ export default function Chatsounds() {
       setSearch(input);
 
       // laggy if during page load
-      setTimeout(async () => {
-        const playedUrls = await play(input);
-        console.log(playedUrls);
+      setTimeout(() => {
+        play(input);
       }, 500);
     }
 
@@ -68,11 +67,10 @@ export default function Chatsounds() {
   );
 
   const inputKeyDown = React.useCallback(
-    async (event: React.KeyboardEvent<HTMLInputElement>) => {
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") {
+        play(input);
         setQuery(input);
-        const playedUrls = await play(input);
-        console.log(playedUrls);
       } else if (event.key === "Tab") {
         event.preventDefault();
         setTabSelection((tabSelection) => {
@@ -90,12 +88,11 @@ export default function Chatsounds() {
   );
 
   const onSearchSetInput = React.useCallback(
-    async (input: string, shouldPlay?: boolean) => {
+    (input: string, shouldPlay?: boolean) => {
       setInput(input);
       if (shouldPlay) {
+        play(input);
         setQuery(input);
-        const playedUrls = await play(input);
-        console.log(playedUrls);
       }
     },
     [play],

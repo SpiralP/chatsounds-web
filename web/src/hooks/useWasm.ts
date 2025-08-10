@@ -9,7 +9,22 @@ import loadWasm, {
 } from "chatsounds-web";
 import React from "react";
 
-export const WasmContext = React.createContext<Wasm | null>(null);
+const wasm = {
+  fetchGithubApi,
+  fetchGithubMsgpack,
+  loadGithubApi,
+  loadGithubMsgpack,
+  async play(input: string) {
+    const playedUrls = await play(input);
+    playedUrls.forEach((url) => {
+      console.log(encodeURI(url));
+    });
+  },
+  search,
+  setup,
+};
+
+export const WasmContext = React.createContext<typeof wasm | null>(null);
 
 export default function useWasm() {
   const wasm = React.useContext(WasmContext);
@@ -17,28 +32,6 @@ export default function useWasm() {
     throw new Error("!wasm");
   }
   return wasm;
-}
-
-export class Wasm {
-  public static async load(): Promise<Wasm> {
-    await loadWasm();
-
-    return new Wasm();
-  }
-
-  public fetchGithubApi = fetchGithubApi;
-
-  public fetchGithubMsgpack = fetchGithubMsgpack;
-
-  public loadGithubApi = loadGithubApi;
-
-  public loadGithubMsgpack = loadGithubMsgpack;
-
-  public play = play;
-
-  public search = search;
-
-  public setup = setup;
 }
 
 export enum WasmState {
@@ -53,7 +46,7 @@ export type WasmStateInfo =
     }
   | {
       state: WasmState.Loaded;
-      wasm: Wasm;
+      wasm: typeof wasm;
     }
   | {
       state: WasmState.Error;
@@ -66,8 +59,8 @@ export function useWasmStateInfo(): WasmStateInfo {
   }));
 
   React.useEffect(() => {
-    Wasm.load().then(
-      (wasm) => {
+    loadWasm().then(
+      () => {
         setStateInfo({ state: WasmState.Loaded, wasm });
       },
       (e) => {
