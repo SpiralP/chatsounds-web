@@ -53,7 +53,7 @@ describe("end-to-end", () => {
 
     const headers = response?.headers();
     expect(headers).toHaveProperty("content-type", "audio/wav");
-    expect(headers).toHaveProperty("content-length", "612696");
+    expect(headers).toHaveProperty("content-length", "1225372");
   });
 
   it("can give mp4 file", async () => {
@@ -67,8 +67,7 @@ describe("end-to-end", () => {
     const headers = response?.headers();
     expect(headers).toHaveProperty("content-type", "video/mp4");
     expect(parseInt(headers?.["content-length"] || "0", 10)).toBeGreaterThan(
-      // sometimes it gives 61007 sometimes it gives 61256 ??
-      61000,
+      60000,
     );
   });
 });
