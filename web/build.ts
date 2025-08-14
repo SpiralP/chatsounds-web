@@ -114,6 +114,10 @@ const config: webpack.Configuration = {
 };
 
 const compiler = webpack(config);
+if (!compiler) {
+  throw new Error("!compiler");
+}
+
 if (isDev) {
   const server = new WebpackDevServer(config.devServer, compiler);
   server.start().catch((e) => {
