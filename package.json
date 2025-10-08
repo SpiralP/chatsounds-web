@@ -25,13 +25,13 @@
     "@types/async-lock": "1.4.2",
     "@types/express": "5.0.3",
     "@types/memoizee": "0.4.12",
-    "@types/node": "22.18.7",
+    "@types/node": "22.18.8",
     "async-lock": "1.4.1",
     "execa": "9.6.0",
     "express": "5.1.0",
     "memoizee": "0.4.17",
     "ts-node": "10.9.2",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   },
   "devDependencies": {
     "@blueprintjs/core": "5.19.1",
