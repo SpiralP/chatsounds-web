@@ -167,7 +167,7 @@ dependencies = [
 
 [[package]]
 name = "chatsounds-web"
-version = "2.1.17"
+version = "2.1.18"
 dependencies = [
  "async-lock",
  "chatsounds",
