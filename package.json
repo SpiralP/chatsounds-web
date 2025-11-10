@@ -1,6 +1,6 @@
 {
   "name": "chatsounds-web",
-  "version": "2.1.25",
+  "version": "2.1.26",
   "private": true,
   "type": "module",
   "bin": {
