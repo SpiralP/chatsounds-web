@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@blueprintjs/core": "5.19.1",
-    "@blueprintjs/eslint-plugin": "6.1.16",
+    "@blueprintjs/eslint-plugin": "6.1.18",
     "@blueprintjs/select": "5.3.21",
     "@pmmmwh/react-refresh-webpack-plugin": "0.6.1",
     "@types/can-autoplay": "3.0.5",
