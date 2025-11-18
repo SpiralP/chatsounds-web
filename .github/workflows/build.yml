@@ -17,4 +17,4 @@ permissions:
 
 jobs:
   build:
-    uses: SpiralP/github-reusable-workflows/.github/workflows/build.yml@6a83e785db9881c610aef92219b96263f251aa1e # main
+    uses: SpiralP/github-reusable-workflows/.github/workflows/build.yml@d17a0d34b716f8bb55388900b93bf792d846227a # main
