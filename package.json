@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@types/async-lock": "1.4.2",
-    "@types/express": "5.0.5",
+    "@types/express": "5.0.6",
     "@types/memoizee": "0.4.12",
     "@types/node": "22.19.1",
     "async-lock": "1.4.1",
