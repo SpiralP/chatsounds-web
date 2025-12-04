@@ -28,7 +28,7 @@
     "@types/node": "22.19.1",
     "async-lock": "1.4.1",
     "execa": "9.6.1",
-    "express": "5.2.0",
+    "express": "5.2.1",
     "memoizee": "0.4.17",
     "ts-node": "10.9.2",
     "typescript": "5.9.3"
