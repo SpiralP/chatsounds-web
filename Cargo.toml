@@ -8,7 +8,7 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-async-lock = "=3.4.1"
+async-lock = "=3.4.2"
 chatsounds = { git = "https://github.com/SpiralP/rust-chatsounds.git", tag = "v3.0.1", default-features = false, features = [
     "memory",
     "playback",
