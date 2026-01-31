@@ -120,8 +120,8 @@
                 cp -v ${hl1-test-sound} "${cache-path hl1-test-sound}"
                 stat ${cache-path hl1-msgpack}
                 stat ${cache-path hl1-test-sound}
-                chatsounds-cli 'search ah hello gordon freeman its good to see you' | grep 'ah hello gordon freeman its good to see you'
-                chatsounds-cli 'ah hello gordon freeman its good to see you'
+                chatsounds-cli search 'ah hello gordon freeman its good to see you' | grep 'ah hello gordon freeman its good to see you'
+                chatsounds-cli render 'ah hello gordon freeman its good to see you' >/dev/null
                 ln -vs ../chatsounds web/chatsounds
               '';
             checkPhase = ''

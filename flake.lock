@@ -2,21 +2,37 @@
   "nodes": {
     "chatsounds-cli-repo": {
       "inputs": {
+        "flake-utils": "flake-utils",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1769391692,
-        "narHash": "sha256-0zEVHgIG7+6g5bu09nBl9OHx3CvrqY4GbyZ1nLK+GL4=",
+        "lastModified": 1769887363,
+        "narHash": "sha256-nh4e77gFQqaXdu3rxHY4jTR2bH5xH/IM9R6YiJjK2B8=",
         "owner": "SpiralP",
         "repo": "chatsounds-cli",
-        "rev": "d91f07d9c5c4998b727a4b0a64420a8a5133f6d4",
+        "rev": "470ab9cdfbe9d2ad8ce6ace02ff22eea13ad441b",
         "type": "github"
       },
       "original": {
         "owner": "SpiralP",
         "repo": "chatsounds-cli",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1758562930,
+        "narHash": "sha256-pXTuZ7zK7Mw/Di4K0Z/XJHm+iP0Lx0N8pfPc0cqcPsE=",
+        "owner": "SpiralP",
+        "repo": "nix-flake-utils",
+        "rev": "7ae99e77aa9506ed0d68b8ea9ad4a0ae5f57e98c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "SpiralP",
+        "repo": "nix-flake-utils",
         "type": "github"
       }
     },

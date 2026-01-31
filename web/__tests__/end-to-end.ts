@@ -53,7 +53,7 @@ describe("end-to-end", () => {
 
     const headers = response?.headers();
     expect(headers).toHaveProperty("content-type", "audio/wav");
-    expect(headers).toHaveProperty("content-length", "1225372");
+    expect(headers).toHaveProperty("content-length", "612730");
   });
 
   it("can give mp4 file", async () => {

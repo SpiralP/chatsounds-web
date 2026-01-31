@@ -1,12 +1,10 @@
 import AsyncLock from "async-lock";
-import { execFile } from "child_process";
 import { execa } from "execa";
 import express, { Response } from "express";
 import fs from "fs";
 import memoizee from "memoizee";
 import path from "path";
 import url, { fileURLToPath } from "url";
-import { promisify } from "util";
 import { decodeComponent } from "./src/utils.js";
 
 const HOST = process.env.HOST || "0.0.0.0";
@@ -30,22 +28,6 @@ if (!fs.existsSync(DIST_DIR)) {
 const CHATSOUNDS_CLI =
   process.platform === "win32" ? "chatsounds-cli.exe" : "chatsounds-cli";
 
-const OUTPUT_WAV = "./output.wav";
-
-const execFileAsync = promisify(execFile);
-
-async function exists(path: string) {
-  return new Promise<boolean>((resolve) => {
-    fs.access(path, fs.constants.F_OK, (err) => {
-      if (err) {
-        resolve(false);
-      } else {
-        resolve(true);
-      }
-    });
-  });
-}
-
 const app = express();
 
 const lock = new AsyncLock();
@@ -59,57 +41,52 @@ const getChatsoundBuffer = memoizee(
       try {
         console.log("exec", { sentence, ext });
 
-        try {
-          await fs.promises.unlink(OUTPUT_WAV);
-        } catch {
-          //
+        const formatOptions = [];
+        if (ext === "mp4" || ext === "webm") {
+          // add a black video for video formats
+          formatOptions.push(
+            "-f",
+            "lavfi",
+            "-i",
+            "color=c=black:s=120x120",
+            "-shortest",
+          );
+        }
+        formatOptions.push("-f", ext);
+        if (ext === "mp4") {
+          formatOptions.push("-movflags", "empty_moov");
         }
 
-        const cmd = await execFileAsync(CHATSOUNDS_CLI, [sentence]);
-        console.log(cmd.stdout);
-        console.warn(cmd.stderr);
-
-        if (await exists(OUTPUT_WAV)) {
-          if (ext === "wav") {
-            return await fs.promises.readFile(OUTPUT_WAV);
-          }
-
-          const formatOptions = [];
-          if (ext === "mp4" || ext === "webm") {
-            // add a black video for video formats
-            formatOptions.push(
-              "-f",
-              "lavfi",
-              "-i",
-              "color=c=black:s=120x120",
-              "-shortest",
-            );
-          }
-          formatOptions.push("-f", ext);
-          if (ext === "mp4") {
-            formatOptions.push("-movflags", "empty_moov");
-          }
-
-          const { stdout } = await execa(
+        // chatsounds-cli outputs f32le 44100Hz stereo PCM to stdout
+        const { stdout } = await execa(CHATSOUNDS_CLI, ["render", sentence], {
+          stderr: "inherit",
+        }).pipe(
+          execa(
             "ffmpeg",
             [
               "-hide_banner",
               "-loglevel",
               "warning",
+              // input format: 32-bit float little-endian PCM
+              "-f",
+              "f32le",
+              "-ar",
+              "44100",
+              "-ac",
+              "2",
               "-i",
-              OUTPUT_WAV,
+              "pipe:0",
               ...formatOptions,
               "pipe:1",
             ],
-            { encoding: "buffer" },
-          );
-          await fs.promises.unlink(OUTPUT_WAV);
-          const buffer = Buffer.from(stdout);
+            {
+              encoding: "buffer",
+              stderr: "inherit",
+            },
+          ),
+        );
 
-          return buffer;
-        }
-
-        return null;
+        return Buffer.from(stdout);
       } catch (e) {
         console.error(e);
         return null;
