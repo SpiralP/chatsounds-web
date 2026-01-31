@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     chatsounds-cli-repo = {
       url = "github:SpiralP/chatsounds-cli";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -156,8 +156,8 @@
               wasm-pack
               wasm-bindgen-cli
               pkg-config
-              rustc-wasm32
-              rustc-wasm32.llvmPackages.lld
+              rustc
+              rustc.llvmPackages.lld
               cargo
               rustPlatform.bindgenHook
             ];
