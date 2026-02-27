@@ -118,7 +118,7 @@ if (!compiler) {
   throw new Error("!compiler");
 }
 
-if (isDev) {
+if (isDev && config.devServer) {
   const server = new WebpackDevServer(config.devServer, compiler);
   server.start().catch((e) => {
     console.error(e);
