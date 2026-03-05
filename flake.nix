@@ -134,7 +134,7 @@
           };
 
           # version needs to match wasm-bindgen's version in Cargo.toml
-          wasm-bindgen-cli = pkgs.wasm-bindgen-cli_0_2_108;
+          wasm-bindgen-cli = pkgs.wasm-bindgen-cli_0_2_113;
 
           wasm = pkgs.rustPlatform.buildRustPackage {
             pname = "${rustManifest.package.name}-wasm";
