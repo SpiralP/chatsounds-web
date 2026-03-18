@@ -166,8 +166,8 @@ dependencies = [
 
 [[package]]
 name = "chatsounds"
-version = "5.0.1"
-source = "git+https://github.com/SpiralP/rust-chatsounds.git?tag=v5.0.1#b21e3a813183e8ed81fb23c94b0860aa3d79d210"
+version = "5.0.2"
+source = "git+https://github.com/SpiralP/rust-chatsounds.git?tag=v5.0.2#a43a072d89980d7a7f35031323f32748f5d2b403"
 dependencies = [
  "async-lock",
  "bytes",
