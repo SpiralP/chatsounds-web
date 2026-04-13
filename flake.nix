@@ -17,7 +17,7 @@
       revSuffix = lib.optionalString (self ? dirtyShortRev)
         "-${self.dirtyShortRev}";
 
-      makePackage = (system: dev:
+      makePackages = (system:
         let
           pkgs = import nixpkgs {
             inherit system;
@@ -47,57 +47,110 @@
               sd --fixed-strings '/etc/fonts/conf.d' "$out/conf.d" "$out/fonts.conf"
               sd --fixed-strings '/var/cache/fontconfig' "/tmp/fontconfig" "$out/fonts.conf"
             '';
+
+          src = lib.sourceByRegex ./. [
+            "^\.gitignore$"
+            # need npmignore or else dist isn't copied
+            "^\.npmignore$"
+            "^package-lock\.json$"
+            "^package\.json$"
+            "^web(/.*)?$"
+          ];
+
+          # shared between package build and devShell
+          commonEnv = {
+            PUPPETEER_SKIP_DOWNLOAD = true;
+            PUPPETEER_EXECUTABLE_PATH = "${lib.getExe pkgs.chromium}";
+
+            FONTCONFIG_FILE = "${fontconfig.out}/fonts.conf";
+            FONTCONFIG_PATH = "${fontconfig.out}/";
+          };
+
+          # shared between wasm build and devShell
+          rustEnv = {
+            # fix "linker `rust-lld` not found"
+            CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
+            # in order to use wasm32-unknown-unknown
+            RUSTFLAGS = "--cfg getrandom_backend=\"wasm_js\"";
+          };
+
+          testInputs = with pkgs; [
+            chatsounds-cli
+            ffmpeg
+            procps
+          ];
+
+          npmLockSources = pkgs.importNpmLock {
+            npmRoot = src;
+            packageSourceOverrides = {
+              "node_modules/chatsounds-web" = "${wasm}/pkg";
+            };
+          };
+
+          # version needs to match wasm-bindgen's version in Cargo.toml
+          wasm-bindgen-cli = pkgs.wasm-bindgen-cli_0_2_108;
+
+          wasm = pkgs.rustPlatform.buildRustPackage ({
+            pname = "${rustManifest.package.name}-wasm";
+            version = rustManifest.package.version;
+
+            src = lib.sourceByRegex ./. [
+              "^\.cargo(/.*)?$"
+              "^build\.rs$"
+              "^Cargo\.(lock|toml)$"
+              "^src(/.*)?$"
+            ];
+
+            buildInputs = with pkgs; [
+              openssl
+              alsa-lib
+            ];
+
+            nativeBuildInputs = with pkgs; [
+              wasm-pack
+              wasm-bindgen-cli
+              pkg-config
+              rustc
+              rustc.llvmPackages.lld
+              cargo
+              rustPlatform.bindgenHook
+            ];
+
+            buildPhase = ''
+              wasm-bindgen --version
+              HOME=$TMPDIR RUST_LOG=info wasm-pack -vvvv build --target web --mode no-install
+            '';
+
+            doCheck = false;
+
+            installPhase = ''
+              mkdir -p $out
+              cp -av pkg $out/
+            '';
+
+            cargoLock = {
+              lockFile = ./Cargo.lock;
+              allowBuiltinFetchGit = true;
+            };
+          } // rustEnv);
         in
-        rec {
-          default = pkgs.buildNpmPackage rec {
+        {
+          packages.default = pkgs.buildNpmPackage ({
             pname = nodeManifest.name;
             version = nodeManifest.version + revSuffix;
 
-            src = lib.sourceByRegex ./. [
-              "^\.gitignore$"
-              # need npmignore or else dist isn't copied
-              "^\.npmignore$"
-              "^package-lock\.json$"
-              "^package\.json$"
-              "^web(/.*)?$"
-            ];
+            inherit src;
 
             npmConfigHook = pkgs.importNpmLock.npmConfigHook;
-            npmDeps = pkgs.importNpmLock {
-              npmRoot = src;
-              packageSourceOverrides = {
-                "node_modules/chatsounds-web" = "${wasm}/pkg";
-              };
-            };
+            npmDeps = npmLockSources;
 
-            nativeBuildInputs = (with pkgs; [
-              # for tests
-              chatsounds-cli
-              ffmpeg
-              procps
-            ])
-            ++ (if dev then
-              (wasm.nativeBuildInputs ++ (with pkgs; [
-                clippy
-                rust-analyzer
-                (rustfmt.override { asNightly = true; })
-              ])) else [ ]);
-
-            buildInputs =
-              if dev
-              then wasm.buildInputs
-              else [ ];
-
-            PUPPETEER_SKIP_DOWNLOAD = true;
-            PUPPETEER_EXECUTABLE_PATH = "${lib.getExe pkgs.chromium}";
+            nativeBuildInputs = testInputs;
 
             postFixup = with pkgs; ''
               wrapProgram $out/bin/chatsounds-web \
                 --prefix PATH : ${lib.makeBinPath [ chatsounds-cli ffmpeg ]}
             '';
 
-            FONTCONFIG_FILE = "${fontconfig.out}/fonts.conf";
-            FONTCONFIG_PATH = "${fontconfig.out}/";
             doCheck = true;
             preCheck =
               let
@@ -131,66 +184,55 @@
             '';
 
             meta.mainProgram = "chatsounds-web";
-          };
+          } // commonEnv);
 
-          # version needs to match wasm-bindgen's version in Cargo.toml
-          wasm-bindgen-cli = pkgs.wasm-bindgen-cli_0_2_108;
-
-          wasm = pkgs.rustPlatform.buildRustPackage {
-            pname = "${rustManifest.package.name}-wasm";
-            version = rustManifest.package.version + revSuffix;
-
-            src = lib.sourceByRegex ./. [
-              "^\.cargo(/.*)?$"
-              "^build\.rs$"
-              "^Cargo\.(lock|toml)$"
-              "^src(/.*)?$"
-            ];
-
-            buildInputs = with pkgs; [
-              openssl
-              alsa-lib
-            ];
-
-            nativeBuildInputs = with pkgs; [
-              wasm-pack
-              wasm-bindgen-cli
-              pkg-config
-              rustc
-              rustc.llvmPackages.lld
-              cargo
-              rustPlatform.bindgenHook
-            ];
-
-            # fix "linker `rust-lld` not found"
-            CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER = "lld";
-            # in order to use wasm32-unknown-unknown
-            RUSTFLAGS = "--cfg getrandom_backend=\"wasm_js\"";
-
-            buildPhase = ''
-              wasm-bindgen --version
-              HOME=$TMPDIR RUST_LOG=info wasm-pack -vvvv build --target web --mode no-install
-            '';
-
-            doCheck = false;
-
-            installPhase = ''
-              mkdir -p $out
-              cp -av pkg $out/
-            '';
-
-            cargoLock = {
-              lockFile = ./Cargo.lock;
-              allowBuiltinFetchGit = true;
+          devShells.default = pkgs.mkShell ({
+            # linkNodeModulesHook reads ${npmDeps}/node_modules from the shell env.
+            npmDeps = pkgs.importNpmLock.buildNodeModules {
+              npmRoot = src;
+              inherit (pkgs) nodejs;
+              # buildNodeModules doesn't accept packageSourceOverrides, but
+              # derivationArgs.npmDeps takes precedence over the default.
+              # commonEnv propagates PUPPETEER_SKIP_DOWNLOAD so puppeteer's
+              # postinstall doesn't try to download chrome.
+              derivationArgs = { npmDeps = npmLockSources; } // commonEnv;
             };
-          };
+
+            nativeBuildInputs = wasm.nativeBuildInputs ++ testInputs ++ (with pkgs; [
+              nodejs
+
+              clippy
+              rust-analyzer
+              (rustfmt.override { asNightly = true; })
+
+              importNpmLock.linkNodeModulesHook
+            ]);
+
+            buildInputs = wasm.buildInputs;
+
+            # linkNodeModulesHook symlinks node_modules/.bin into the nix store;
+            # replace it with a real directory so tools can work with it.
+            postShellHook = ''
+              if [ -L node_modules/.bin ]; then
+                BINDIR=$(readlink -f node_modules/.bin)
+                rm node_modules/.bin
+                mkdir node_modules/.bin
+                ln -s "$BINDIR"/* node_modules/.bin/
+              fi
+            '';
+          } // commonEnv // rustEnv);
         }
       );
     in
     builtins.foldl' lib.recursiveUpdate { } (builtins.map
-      (system: {
-        devShells.${system} = makePackage system true;
-        packages.${system} = makePackage system false;
-      })
+      (system:
+        let
+          result = makePackages system;
+        in
+        {
+          packages.${system} = result.packages;
+          devShells.${system} = result.devShells;
+        }
+      )
       lib.systems.flakeExposed);
 }
