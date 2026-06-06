@@ -22,6 +22,7 @@ const SOURCES: Array<["api" | "msgpack", string, string]> = [
   ["api", "NotAwesome2/chatsounds", "sounds"],
   ["api", "PAC3-Server/chatsounds", "sounds/chatsounds"],
   ["api", "Metastruct/garrysmod-chatsounds", "sound/chatsounds/autoadd"],
+  ["api", "suchipi/suchipi-chatsounds", "sounds"],
 ];
 
 export default function ChatsoundsLoading() {
