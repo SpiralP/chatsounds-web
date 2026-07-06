@@ -161,8 +161,8 @@ dependencies = [
 
 [[package]]
 name = "chatsounds"
-version = "5.1.0"
-source = "git+https://github.com/SpiralP/rust-chatsounds.git?tag=v5.1.0#6e9e85e5367337ca6677cc863f3224fdc982ce1a"
+version = "6.1.0"
+source = "git+https://github.com/SpiralP/rust-chatsounds.git?tag=v6.1.0#63c52bb0a2c9c99212882701dbcfd7e44f7db90e"
 dependencies = [
  "async-lock",
  "bytes",
@@ -177,6 +177,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "thiserror 2.0.18",
+ "tracing",
  "twoway",
 ]
 
@@ -1331,9 +1332,9 @@ checksum = "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf"
 
 [[package]]
 name = "rand"
-version = "0.10.1"
+version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2e8e8bcc7961af1fdac401278c6a831614941f6164ee3bf4ce61b7edb162207"
+checksum = "c7f5fa3a058cd35567ef9bfa5e75732bee0f9e4c55fa90477bef2dfcdbc4be80"
 dependencies = [
  "chacha20",
  "getrandom 0.4.3",
@@ -1939,7 +1940,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "63e71662fa4b2a2c3a26f570f037eb95bb1f85397f3cd8076caed2f026a6d100"
 dependencies = [
  "pin-project-lite",
+ "tracing-attributes",
  "tracing-core",
+]
+
+[[package]]
+name = "tracing-attributes"
+version = "0.1.31"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7490cfa5ec963746568740651ac6781f701c9c5ea257c58e057f3ba8cf69e8da"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
