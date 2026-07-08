@@ -13,7 +13,7 @@ jobs:
     uses: ./.github/workflows/build.yml
 
   release:
-    uses: SpiralP/github-reusable-workflows/.github/workflows/release.yml@779c0da2b5f763494dffddf0bbfb4884d1642ba6 # main
+    uses: SpiralP/github-reusable-workflows/.github/workflows/release.yml@8cd236d2625eddac0a5ce3520e49be7be3631079 # main
     needs: build
     if: "${{ ! startsWith(github.event.head_commit.message, 'chore(release): ') }}"
     concurrency:
