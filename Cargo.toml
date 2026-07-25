@@ -16,7 +16,7 @@ chatsounds = { git = "https://github.com/SpiralP/rust-chatsounds.git", tag = "v6
     "wasm",
 ] }
 console_error_panic_hook = "=0.1.7"
-futures = "=0.3.32"
+futures = "=0.3.33"
 getrandom = { version = "=0.4.3", features = ["wasm_js"] }
 js-sys = "=0.3.85"
 lazy_static = "=1.5.0"
