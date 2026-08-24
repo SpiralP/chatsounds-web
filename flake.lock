@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1786960976,
-        "narHash": "sha256-h6RsSMvohfx35GhheEZiHJZ6OVTuxbJYyr3lJZ6dJa0=",
+        "lastModified": 1787393254,
+        "narHash": "sha256-MOqXDLRc/e8IalJC/kl0WQHbfX34R6DayDg0b9KYvO0=",
         "owner": "SpiralP",
         "repo": "chatsounds-cli",
-        "rev": "cdbd7aa09ac7f8134e84142dde00b87a505cf2b8",
+        "rev": "03875c6e09ba5b28a433a7a5dd924aad3228d9f5",
         "type": "github"
       },
       "original": {
