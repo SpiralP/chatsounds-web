@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     chatsounds-cli-repo = {
       url = "github:SpiralP/chatsounds-cli";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -157,11 +157,11 @@
                 cache-path = (fetched:
                   builtins.concatStringsSep "/" (
                     [ "chatsounds" ] ++
-                    builtins.match "(..)(.+)" (
-                      builtins.hashString "sha256" (
-                        builtins.replaceStrings [ "%20" ] [ " " ] fetched.url
+                      builtins.match "(..)(.+)" (
+                        builtins.hashString "sha256" (
+                          builtins.replaceStrings [ "%20" ] [ " " ] fetched.url
+                        )
                       )
-                    )
                   )
                 );
               in
