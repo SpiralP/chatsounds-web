@@ -13,6 +13,10 @@ updates:
     schedule:
       interval: weekly
     versioning-strategy: increase
+    ignore:
+      # locally generated wasm package (wasm-pack output in ./pkg, not on a registry),
+      # and ./pkg/package.json isn't in git so the path dep can never be fetched
+      - dependency-name: chatsounds-web
     groups:
       npm-dependencies:
         patterns:
